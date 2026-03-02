@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; worker-src blob:;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0f0008">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EROS">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<title>EROS — Mastery System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0008;--s1:#180010;--s2:#200018;--s3:#2a0020;
+  --b1:#420030;--b2:#6a0048;
+  --text:#f0dde8;--dim:#c099ae;--muted:#8a5570;
+  --pink:#ff2070;--rose:#ff6096;--hot:#ff004a;
+  --gold:#ffb020;--teal:#22d4b8;--cyan:#30b8f0;
+  --violet:#c070f0;--green:#40e080;--amber:#f88020;
+  --blue:#58a0f8;--wine:#b01030;--cream:#ffe8f4;
+  --phase1:#22d4b8;--phase2:#ff6096;--phase3:#c070f0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+
+/* NAV */
+#nav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b1);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nb{flex:1;padding:8px 1px 7px;background:none;border:none;color:var(--muted);font-size:8px;letter-spacing:.06em;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .2s;font-family:'Space Mono',monospace}
+.nb .ico{font-size:16px;line-height:1}
+.nb.on{color:var(--pink);border-top:2px solid var(--pink);margin-top:-1px}
+
+/* PAGES */
+#app{padding:18px 16px;padding-bottom:82px;max-width:680px;margin:0 auto;min-height:100vh}
+.pg{display:none}
+.pg.on{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.ptitle{font-size:24px;font-weight:700;letter-spacing:-.01em;color:var(--cream);line-height:1.2}
+.psub{font-size:13px;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.7;font-family:'Space Mono',monospace}
+.sec{font-size:9px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;font-family:'Space Mono',monospace;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* CARDS */
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:14px;margin-bottom:10px;transition:border-color .18s}
+.card.accent{border-color:var(--pink);background:linear-gradient(135deg,#ff207014,var(--s2))}
+.card.teal{border-color:var(--teal);background:#22d4b80a}
+.card.gold{border-color:var(--gold);background:#ffb0200a}
+.ctitle{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.cbody{font-size:13px;color:var(--dim);line-height:1.85}
+
+/* TAGS & PILLS */
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-family:'Space Mono',monospace;border:1px solid;white-space:nowrap;letter-spacing:.05em}
+.pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.pill{padding:5px 13px;border-radius:20px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-size:10px;font-family:'Space Mono',monospace;cursor:pointer;transition:all .15s;letter-spacing:.06em}
+.pill.on{border-color:var(--pink);color:var(--pink);background:#ff207015}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:5px;border:1px solid var(--pink);background:transparent;color:var(--pink);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--pink);color:var(--bg)}
+.btn:focus{outline:2px solid var(--pink);outline-offset:2px}
+.btn.sm{padding:5px 11px;font-size:10px}
+.btn.fill{background:var(--pink);color:white}
+.btn.fill:hover{filter:brightness(1.12)}
+.btn.muted{border-color:var(--muted);color:var(--muted)}
+.btn.teal{border-color:var(--teal);color:var(--teal)}
+.btn.teal:hover{background:var(--teal);color:var(--bg)}
+.btn.gold{border-color:var(--gold);color:var(--gold)}
+.btn.gold:hover{background:var(--gold);color:var(--bg)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+/* INPUTS */
+input,select,textarea{background:var(--s3);border:1px solid var(--b1);color:var(--text);padding:9px 12px;border-radius:5px;font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--b2)}
+textarea{resize:vertical;min-height:70px}
+label,.lbl{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;display:block;margin-bottom:5px}
+.field{margin-bottom:13px}
+input[type=range]{padding:0;height:4px;cursor:pointer;accent-color:var(--pink)}
+
+/* BAR */
+.bar{background:var(--s3);border-radius:2px;height:5px;overflow:hidden;margin-top:3px}
+.barfill{height:100%;border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* XP BAR */
+.xpwrap{background:var(--s3);border-radius:3px;height:6px;overflow:hidden}
+.xpbar{height:100%;background:linear-gradient(90deg,var(--pink),var(--rose));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:360px){.g2,.g3{grid-template-columns:1fr}}
+
+/* SCORE BOX */
+.sbox{background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:10px;text-align:center}
+.snum{font-size:28px;font-family:'Space Mono',monospace;font-weight:700;line-height:1}
+.slbl{font-size:9px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-top:4px}
+
+/* CHECKLIST */
+.chk{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.chk:last-child{border-bottom:none}
+.chkbox{width:22px;height:22px;border-radius:5px;border:1px solid var(--b1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;margin-top:1px}
+.chkbox.done{background:var(--teal);border-color:var(--teal);color:var(--bg);font-weight:700}
+
+/* MODAL */
+#moverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(3px)}
+#moverlay.on{display:flex}
+#mdl{background:var(--s1);border-radius:14px 14px 0 0;border-top:1px solid var(--b2);padding:22px 18px;width:100%;max-height:85vh;overflow-y:auto;animation:su .22s ease;position:relative}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#mclose{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:4px}
+
+/* TOAST */
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--b2);padding:9px 20px;border-radius:5px;font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#toast.on{opacity:1}
+
+/* ARCHETYPE GRID */
+.archgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.archcard{padding:12px;border-radius:8px;border:1px solid var(--b1);background:var(--s2);cursor:pointer;transition:all .18s;text-align:center;-webkit-tap-highlight-color:transparent}
+.archcard:hover{transform:translateY(-1px)}
+.archcard.on{border-width:2px}
+.archico{font-size:28px;margin-bottom:5px;line-height:1}
+.archnm{font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.05em;line-height:1.3}
+
+/* SKILL CLASS */
+.classcard{border-radius:8px;border:1px solid var(--b1);overflow:hidden;margin-bottom:12px}
+.classhdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.classbody{padding:0 14px 14px;display:none}
+.classbody.on{display:block}
+
+/* LOG ITEM */
+.logitem{padding:12px 14px;border:1px solid var(--b1);border-radius:7px;background:var(--s2);margin-bottom:8px}
+
+/* QUEST CARD */
+.qcard{padding:13px 14px;border:1px solid var(--b1);border-radius:8px;background:var(--s2);margin-bottom:10px}
+.qcard.active{border-color:var(--gold)}
+.qcard.done{border-color:var(--teal);opacity:.7}
+
+/* PRINCIPLE */
+.principle{border-left:2px solid;padding:10px 12px;border-radius:0 6px 6px 0;background:var(--s2);margin-bottom:8px}
+
+/* PROGRESS PHASE */
+.phasetrack{display:flex;gap:4px;margin-bottom:6px}
+.phasedot{flex:1;height:5px;border-radius:2px;background:var(--s3);transition:background .4s}
+
+/* RUNG */
+.rung{display:flex;gap:0;align-items:stretch;margin-bottom:2px}
+.rungbar{width:4px;flex-shrink:0;border-radius:2px 0 0 2px}
+.rungbody{padding:11px 13px;flex:1;border-bottom:1px solid var(--b1);background:var(--s2)}
+
+/* QUESTIONNAIRE */
+.qopt{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid var(--b1);border-radius:7px;margin-bottom:7px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.qopt:hover{border-color:var(--b2)}
+.qopt.sel{border-color:var(--pink);background:#ff207012}
+.qopt-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s}
+.qopt.sel .qopt-dot{background:var(--pink);border-color:var(--pink);color:white}
+
+/* STARS */
+.stars{display:inline-flex;gap:2px}
+.star{font-size:14px}
+
+hr{border:none;border-top:1px solid var(--b1);margin:18px 0}
+
+/* KINK CHIPS */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.kchip{padding:8px 10px;border:1px solid var(--b1);border-radius:6px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;background:var(--s2)}
+.kchip:hover{border-color:var(--b2)}
+.kchip.mine{border-color:var(--pink)!important;background:#ff207015!important}
+.kchip.theirs{border-color:var(--teal)!important;background:#22d4b815!important}
+.kchip.shared{border-color:var(--violet)!important;background:#c070f015!important}
+.kchip-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.kchip-sub{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+
+/* PARTNER CARDS */
+.pcard{border:1px solid var(--b1);border-radius:9px;overflow:hidden;margin-bottom:12px;background:var(--s2)}
+.pcard-head{padding:13px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pcard-head:hover{background:var(--s3)}
+.pcard-body{display:none;padding:0 14px 14px;border-top:1px solid var(--b1)}
+.pcard-body.on{display:block}
+.pavatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid}
+
+/* COMPAT RING */
+.cring{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:3px solid}
+.cring-num{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;line-height:1}
+.cring-lbl{font-size:8px;font-family:'Space Mono',monospace;letter-spacing:.06em;color:var(--muted);margin-top:1px}
+
+/* BOND TRACK */
+.bondtrack{display:flex;gap:3px;margin:6px 0}
+.bonddot{flex:1;height:4px;border-radius:2px;transition:background .3s}
+
+/* HEAT BADGE */
+.heat{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.06em}
+
+/* CULT SELECT */
+.cultgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px}
+.cultopt{padding:7px 9px;border:1px solid var(--b1);border-radius:5px;cursor:pointer;font-size:11px;color:var(--muted);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.cultopt:hover{border-color:var(--b2)}
+.cultopt.on{border-color:var(--teal);color:var(--teal);background:#22d4b810}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+<div id="moverlay"><div id="mdl"><button id="mclose" aria-label="Close">✕</button><div id="mbody"></div></div></div>
+
+<div id="app">
+
+<!-- ══ HOME ══ -->
+<div class="pg on" id="pg-home">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+    <div>
+      <div class="ptitle" id="greeting">Good evening.</div>
+      <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:3px" id="hrank">Unawakened</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:8px">
+      <button onclick="openSettings()" style="background:none;border:1px solid var(--b1);border-radius:5px;color:var(--muted);font-size:16px;cursor:pointer;padding:5px 8px;margin-top:2px;transition:color .2s" title="Backup & Settings">⚙</button>
+      <div style="text-align:right">
+        <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--muted)">LEVEL</div>
+        <div style="font-size:38px;font-family:'Space Mono',monospace;font-weight:700;color:var(--pink);line-height:1" id="hlv">1</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:6px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:10px;font-family:'Space Mono',monospace;color:var(--muted)">XP PROGRESS</span>
+      <span style="font-size:10px;font-family:'Space Mono',monospace;color:var(--pink)" id="hxp">0 / 500</span>
+    </div>
+    <div class="xpwrap"><div class="xpbar" id="xpbar" style="width:0%"></div></div>
+  </div>
+  <div id="hphase" style="margin-bottom:18px"></div>
+
+  <div id="hsetup" style="display:none"></div>
+
+  <div class="sec">TODAY'S FOCUS</div>
+  <div id="hfocus"></div>
+
+  <div class="sec">ACTIVE QUEST</div>
+  <div id="hquest"></div>
+
+  <div class="sec">DAILY PRACTICE</div>
+  <div class="card" id="hchecks"></div>
+
+  <div class="sec">RECENT LOG</div>
+  <div id="hlog"></div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+<div class="pg" id="pg-profile">
+  <div class="ptitle">Your Profile</div>
+  <div class="psub">Your archetype, your stats, your trajectory.</div>
+  <div id="profbody"></div>
+</div>
+
+<!-- ══ SKILLS ══ -->
+<div class="pg" id="pg-skills">
+  <div class="ptitle">Skills</div>
+  <div class="psub">Real skills. Built through real work. Marked when genuinely embodied — not just read.</div>
+  <div id="skillphase" style="margin-bottom:14px"></div>
+  <div class="pills" id="skillpills">
+    <div class="pill on" data-sf="all">All</div>
+    <div class="pill" data-sf="sensualist">Sensualist</div>
+    <div class="pill" data-sf="conductor">Conductor</div>
+    <div class="pill" data-sf="explorer">Explorer</div>
+    <div class="pill" data-sf="alchemist">Alchemist</div>
+    <div class="pill" data-sf="savage">Savage</div>
+    <div class="pill" data-sf="architect">Architect</div>
+  </div>
+  <div id="skilllist"></div>
+</div>
+
+<!-- ══ LOG ══ -->
+<div class="pg" id="pg-log">
+  <div class="ptitle">Experience Log</div>
+  <div class="psub">The center of the system. Mastery is accumulated real experience — reflected on honestly.</div>
+
+  <div class="card accent" style="margin-bottom:16px">
+    <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--pink);margin-bottom:12px;letter-spacing:.12em">LOG AN EXPERIENCE</div>
+    <div class="field">
+      <label>EXPERIENCE TYPE</label>
+      <select id="logtype"></select>
+    </div>
+    <div class="g2">
+      <div class="field">
+        <label>CONTEXT</label>
+        <select id="logctx">
+          <option>Bar / Night</option><option>Gym</option><option>Social Circle</option>
+          <option>Work Event</option><option>Date</option><option>Dating App</option>
+          <option>Intimate Session</option><option>Solo Practice</option><option>Study / Reading</option><option>N/A</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>QUALITY (1–5 ★)</label>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
+          <input type="range" id="logqual" min="1" max="5" step="1" value="3" style="flex:1">
+          <span style="font-family:'Space Mono',monospace;font-size:13px;color:var(--pink);min-width:24px" id="logquallbl">3★</span>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>WHAT HAPPENED / WHAT YOU LEARNED (be specific)</label>
+      <textarea id="lognote" placeholder="Write honestly. What worked? What didn't? What did you learn?" maxlength="1000"></textarea>
+    </div>
+    <button class="btn fill" id="logsubmit" style="width:100%;margin-top:4px">Log → Earn XP</button>
+    <div style="font-size:11px;color:var(--muted);font-style:italic;margin-top:8px;font-family:'Space Mono',monospace" id="logxppreview">Select a type to see XP value</div>
+  </div>
+
+  <div style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.12em">YOUR LOG</span>
+      <div id="logstats" style="display:flex;gap:14px"></div>
+    </div>
+    <div class="pills" id="logpills">
+      <div class="pill on" data-lf="all">All</div>
+      <div class="pill" data-lf="Social">Social</div>
+      <div class="pill" data-lf="Intimate">Intimate</div>
+      <div class="pill" data-lf="Practice">Practice</div>
+      <div class="pill" data-lf="Education">Education</div>
+      <div class="pill" data-lf="Milestone">Milestone</div>
+    </div>
+  </div>
+  <div id="loglist"></div>
+</div>
+
+<!-- ══ FIELD ══ -->
+<div class="pg" id="pg-field">
+  <div class="ptitle">Field & Library</div>
+  <div class="psub">Mental overlay + reading list + kink education. Internalize, then close the app.</div>
+  <div class="pills" id="fieldpills">
+    <div class="pill on" data-fp="approach">Approach</div>
+    <div class="pill" data-fp="escalation">Escalation</div>
+    <div class="pill" data-fp="signals">Signals</div>
+    <div class="pill" data-fp="intimate">Intimate</div>
+    <div class="pill" data-fp="library">Library</div>
+    <div class="pill" data-fp="kinks">Kinks</div>
+    <div class="pill" data-fp="fetishes">Fetishes</div>
+    <div class="pill" data-fp="fantasies">Fantasies</div>
+  </div>
+  <div id="fieldcontent"></div>
+</div>
+
+<!-- ══ PARTNERS ══ -->
+<div class="pg" id="pg-partners">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+    <div>
+      <div class="ptitle">Partners</div>
+      <div class="psub" style="margin-top:3px">Reads your Profile kinks. Compatibility scores update automatically.</div>
+    </div>
+    <button class="btn sm fill" id="btn-addpartner" style="flex-shrink:0;margin-top:4px">+ Add</button>
+  </div>
+  <div id="partners-warn" style="display:none"></div>
+  <div id="partners-myprefs" style="margin-bottom:6px"></div>
+  <div id="partnerslist"></div>
+</div>
+
+</div>
+
+<nav id="nav">
+  <button class="nb on" data-pg="home" id="nb-home"><span class="ico">⌂</span>HOME</button>
+  <button class="nb" data-pg="profile" id="nb-profile"><span class="ico">◈</span>ME</button>
+  <button class="nb" data-pg="skills" id="nb-skills"><span class="ico">✦</span>SKILLS</button>
+  <button class="nb" data-pg="log" id="nb-log"><span class="ico">◉</span>LOG</button>
+  <button class="nb" data-pg="field" id="nb-field"><span class="ico">◎</span>FIELD</button>
+  <button class="nb" data-pg="partners" id="nb-partners"><span class="ico">♡</span>HAREM</button>
+</nav>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+//  SECURITY UTILITIES
+// ═══════════════════════════════════════════════════════════════
+function sanitize(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/\//g,'&#x2F;');
+}
+
+function validateState(s) {
+  if (!s || typeof s !== 'object') return false;
+  var required = ['xp','arch','stats','skills','books','logs','checks','checkDate','questDone'];
+  for (var i = 0; i < required.length; i++) {
+    if (s[required[i]] === undefined) return false;
+  }
+  if (typeof s.xp !== 'number' || s.xp < 0 || s.xp > 9999999) return false;
+  if (!Array.isArray(s.logs)) return false;
+  if (typeof s.stats !== 'object') return false;
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+var STORAGE_KEY = 'eros_v5';
+
+var STATE = {
+  xp: 0,
+  arch: null,
+  questDone: false,
+  questAnswers: {},
+  stats: { charisma:25, presence:20, technique:20, endurance:25, mind:22, openness:20 },
+  skills: {},
+  books: {},
+  logs: [],
+  checks: {},
+  checkDate: null,
+  activeQuest: null,
+  skillFilter: 'all',
+  logFilter: 'all',
+  fieldTab: 'approach',
+  // MY PREFERENCES — feeds compatibility engine
+  myKinks: [],
+  myFetishes: [],
+  myFantasies: [],
+  myBackground: '',
+  // PARTNERS
+  partners: []
+};
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e) {}
+}
+
+function load() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    if (!validateState(parsed)) return;
+    // Merge parsed into STATE safely
+    var safe = {
+      xp: Math.min(Math.max(parseInt(parsed.xp)||0, 0), 9999999),
+      arch: typeof parsed.arch === 'string' ? parsed.arch : null,
+      questDone: !!parsed.questDone,
+      questAnswers: (parsed.questAnswers && typeof parsed.questAnswers === 'object') ? parsed.questAnswers : {},
+      stats: {},
+      skills: {},
+      books: {},
+      logs: [],
+      checks: (parsed.checks && typeof parsed.checks === 'object') ? parsed.checks : {},
+      checkDate: typeof parsed.checkDate === 'string' ? parsed.checkDate : null,
+      activeQuest: typeof parsed.activeQuest === 'string' ? parsed.activeQuest : null,
+      skillFilter: 'all',
+      logFilter: 'all',
+      fieldTab: 'approach'
+    };
+    // Validate stats
+    var statKeys = ['charisma','presence','technique','endurance','mind','openness'];
+    statKeys.forEach(function(k) {
+      var v = parseInt(parsed.stats && parsed.stats[k]);
+      safe.stats[k] = (!isNaN(v) && v >= 0 && v <= 100) ? v : STATE.stats[k];
+    });
+    // Validate skills (only known IDs)
+    var knownSkillIds = SKILLS.map(function(s){return s.id;});
+    if (parsed.skills && typeof parsed.skills === 'object') {
+      knownSkillIds.forEach(function(id) {
+        if (parsed.skills[id] === true || typeof parsed.skills[id] === 'number') {
+          safe.skills[id] = parsed.skills[id];
+        }
+      });
+    }
+    // Validate books
+    var knownBookIds = BOOKS.map(function(b){return b.id;});
+    if (parsed.books && typeof parsed.books === 'object') {
+      knownBookIds.forEach(function(id) {
+        if (parsed.books[id] === true) safe.books[id] = true;
+      });
+    }
+    // Validate logs (max 500 entries, each sanitized)
+    if (Array.isArray(parsed.logs)) {
+      safe.logs = parsed.logs.slice(0, 500).filter(function(l) {
+        return l && typeof l === 'object' && typeof l.type === 'string' && typeof l.xp === 'number';
+      }).map(function(l) {
+        return {
+          type: String(l.type).slice(0,50),
+          cat: String(l.cat||'Other').slice(0,30),
+          ctx: String(l.ctx||'').slice(0,50),
+          note: String(l.note||'').slice(0,1000),
+          date: String(l.date||'').slice(0,20),
+          xp: Math.min(Math.max(parseInt(l.xp)||0, 0), 9999),
+          qual: Math.min(Math.max(parseInt(l.qual)||3, 1), 5)
+        };
+      });
+    }
+    // Load preferences
+    safe.myKinks = Array.isArray(parsed.myKinks) ? parsed.myKinks.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [];
+    safe.myFetishes = Array.isArray(parsed.myFetishes) ? parsed.myFetishes.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [];
+    safe.myFantasies = Array.isArray(parsed.myFantasies) ? parsed.myFantasies.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [];
+    safe.myBackground = (typeof parsed.myBackground==='string'&&parsed.myBackground.length<60) ? parsed.myBackground : '';
+    // Load partners
+    safe.partners = [];
+    if (Array.isArray(parsed.partners)) {
+      safe.partners = parsed.partners.slice(0,50).filter(function(p){return p&&typeof p==='object';}).map(function(p){
+        return {
+          id: (typeof p.id==='string'&&p.id.length<40) ? p.id : ('p'+Date.now()),
+          name: (typeof p.name==='string') ? p.name.slice(0,60) : 'Partner',
+          emoji: (typeof p.emoji==='string') ? p.emoji.slice(0,4) : '☽',
+          background: (typeof p.background==='string') ? p.background.slice(0,60) : '',
+          energy: (typeof p.energy==='string') ? p.energy.slice(0,40) : '',
+          notes: (typeof p.notes==='string') ? p.notes.slice(0,1000) : '',
+          trust: typeof p.trust==='number' ? Math.min(Math.max(Math.floor(p.trust),0),100) : 30,
+          bondLevel: typeof p.bondLevel==='number' ? Math.min(Math.max(Math.floor(p.bondLevel),0),7) : 0,
+          sessions: typeof p.sessions==='number' ? Math.min(Math.max(Math.floor(p.sessions),0),9999) : 0,
+          theirKinks: Array.isArray(p.theirKinks) ? p.theirKinks.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [],
+          theirFetishes: Array.isArray(p.theirFetishes) ? p.theirFetishes.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [],
+          theirFantasies: Array.isArray(p.theirFantasies) ? p.theirFantasies.filter(function(x){return typeof x==='string'&&x.length<50;}).slice(0,60) : [],
+          ratings: { looks: 0, energy: 0, chemistry: 0 }
+        };
+      });
+    }
+    Object.assign(STATE, safe);
+  } catch(e) {
+    // If anything fails, start fresh — don't expose error info
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MATH
+// ═══════════════════════════════════════════════════════════════
+function xpForLevel(lv) { return 500 + (lv - 1) * 120; }
+function totalXPForLevel(lv) {
+  var total = 0;
+  for (var i = 1; i < lv; i++) total += xpForLevel(i);
+  return total;
+}
+function getLevel(xp) {
+  var lv = 1;
+  while (lv < 100 && xp >= totalXPForLevel(lv + 1)) lv++;
+  return lv;
+}
+function getLevelPct(xp) {
+  var lv = getLevel(xp);
+  if (lv >= 100) return 100;
+  var start = totalXPForLevel(lv);
+  var end = totalXPForLevel(lv + 1);
+  return Math.round(((xp - start) / (end - start)) * 100);
+}
+function getPhase(lv) { return lv <= 20 ? 1 : lv <= 60 ? 2 : 3; }
+
+var RANKS = [
+  [1,'Unawakened'],[5,'Curious'],[10,'Aware'],[15,'Exploring'],
+  [20,'Foundation Complete'],[25,'Developing'],[30,'Competent'],
+  [35,'Confident'],[40,'★ Evolved I'],[50,'Refined'],[55,'Experienced'],
+  [60,'Skilled'],[70,'★ Evolved II'],[80,'Advanced'],[90,'Master'],[100,'★ Transcendent']
+];
+function getRank(lv) {
+  var r = 'Unawakened';
+  RANKS.forEach(function(x){ if(lv>=x[0]) r=x[1]; });
+  return r;
+}
+
+function skillRankCost(r) { return 80 + r * 60; }
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — ARCHETYPES
+// ═══════════════════════════════════════════════════════════════
+var ARCHETYPES = [
+  { id:'dom', icon:'♛', name:'The Dom', color:'#c02050',
+    vibe:'Control · Command · Authority', tagline:'You own the scene.',
+    phase1:'Your work is presence — you cannot command a room you\'re not fully in. Build stillness, eye contact, and decisive movement before any technique.',
+    phase2:'Dominant energy in the bedroom is built through trust. She surrenders to the person she trusts most, not the one who performs control.',
+    phase3:'Authority without warmth is just aggression. The evolved Dom leads through a combination of certainty and care that no one else can replicate.',
+    keys:['Decisive','Calm under pressure','Commands without explaining','Owns silence'],
+    classAffinity:'conductor' },
+  { id:'giver', icon:'☽', name:'The Giver', color:'#e04070',
+    vibe:'Service · Devotion · Her Pleasure', tagline:'Her orgasm is your metric.',
+    phase1:'Emotional intelligence is your foundation. Learn to read people, ask the right questions, and sit with someone\'s experience without fixing it.',
+    phase2:'70% of women require clitoral stimulation to orgasm. You are building the skills most men never develop because they\'re too focused on themselves.',
+    phase3:'The Pleasure Architect knows her body better than she does. Not through technique alone — through accumulated attention over time.',
+    keys:['High emotional IQ','Great listener','Specific compliments','Makes people feel seen'],
+    classAffinity:'sensualist' },
+  { id:'freak', icon:'⚡', name:'The Freak', color:'#9050e0',
+    vibe:'Exploration · Kink · No Ceiling', tagline:'The menu is a suggestion.',
+    phase1:'Curiosity without safety is chaos. The foundation of the Explorer is the ability to discuss taboo without making others uncomfortable.',
+    phase2:'Every kink has a negotiation framework, a safety layer, and an aftercare requirement. Build these before building the practice.',
+    phase3:'The Boundary Lord has been to the edges and knows which ones are worth staying at. He leads others there safely.',
+    keys:['Comfortable with taboo','Creates memorable experiences','Proposes unexpected things','Playfully transgressive'],
+    classAffinity:'explorer' },
+  { id:'slowburn', icon:'◌', name:'The Slow Burner', color:'#c07020',
+    vibe:'Anticipation · Tension · The Almost', tagline:'You make her want it before you touch her.',
+    phase1:'Mystery is not absence — it is selective presence. You are building the self-containment that makes the almost-touch land.',
+    phase2:'The pre-session is a skill. Tension built over hours of non-sexual interaction compounds exponentially into the session itself.',
+    phase3:'The Desire Architect knows desire lives in the space between bodies. He manufactures that space deliberately and watches it fill.',
+    keys:['Maintains mystery','Never chases or rushes','Creates suspense','Eye contact as a weapon'],
+    classAffinity:'architect' },
+  { id:'savage', icon:'◆', name:'The Savage', color:'#e03060',
+    vibe:'Intensity · Stamina · Raw Force', tagline:'You put it down. Every time.',
+    phase1:'The body is the instrument. Before any intensity, build the engine — cardiovascular base, kegel protocol, hip mobility. Stamina is not innate.',
+    phase2:'Directed intensity is different from uncontrolled force. Read her response to calibrate force, depth, and pace in real time.',
+    phase3:'The Unstoppable has built something rare — physical capacity in service of another person\'s pleasure. The discipline shows.',
+    keys:['Physical presence','Direct and unambiguous','Commands space','High sustained energy'],
+    classAffinity:'savage' },
+  { id:'tantric', icon:'◎', name:'The Tantric', color:'#20a890',
+    vibe:'Presence · Breath · Mind-Body', tagline:'Sex as a spiritual act.',
+    phase1:'Presence is not a technique. It is what happens when you genuinely stop managing your impression and start paying attention. Practice this in everyday life first.',
+    phase2:'Eye contact through orgasm. Breathing together. Hand on her chest matching her rhythm. These are the acts that release more oxytocin than most physical techniques.',
+    phase3:'The Sacred One has made something rare — depth of connection that makes partners unable to fully explain what happened. It was not a technique. It was a state.',
+    keys:['Deeply present','Makes you feel like the only person','Unhurried','Speaks with intention'],
+    classAffinity:'alchemist' },
+  { id:'switch', icon:'⇌', name:'The Switch', color:'#30b0d0',
+    vibe:'Adaptability · Full Spectrum', tagline:'You become what the moment needs.',
+    phase1:'You cannot adapt to a room you have not read. Attention and empathy are the foundations of the Switch — not technique.',
+    phase2:'Role fluidity requires trust infrastructure. The Switch earns the right to flip through consistency and communication.',
+    phase3:'The Complete needs no archetype — they are their own archetype, assembled from the most powerful elements of every other.',
+    keys:['Reads and adapts instantly','Leading or following — equally comfortable','Never rigid','Highest social IQ'],
+    classAffinity:'alchemist' },
+  { id:'daddy', icon:'♡', name:'The Daddy', color:'#d07020',
+    vibe:'Protection · Warmth · Tender Authority', tagline:'You make her safe enough to let go.',
+    phase1:'Warmth without need. The Daddy does not need validation from the person he protects. He gives care from a full position, not a hungry one.',
+    phase2:'Good Girl Energy, The Check-In, Praise Loop — these are technical skills built on an emotional foundation. Aftercare is not optional here. It is the point.',
+    phase3:'The One She Runs To has built something that transcends technique — a quality of presence that makes people feel held. That is the rarest skill in this system.',
+    keys:['Protective instinct','Warmth without weakness','Checks in genuinely','Present and attentive'],
+    classAffinity:'conductor' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — SKILL CLASSES & SKILLS
+// ═══════════════════════════════════════════════════════════════
+var CLASS_META = {
+  sensualist: { name:'The Sensualist', color:'#e04070', icon:'☽', desc:'Oral, manual, pleasure delivery. You measure success in her reactions.' },
+  conductor:  { name:'The Conductor',  color:'#c02050', icon:'♛', desc:'Dominance, control, pacing, command presence. You set the terms.' },
+  explorer:   { name:'The Explorer',   color:'#9050e0', icon:'⚡', desc:'Kink, fantasy, edge play. You live at the edges of what is possible.' },
+  alchemist:  { name:'The Alchemist',  color:'#20a890', icon:'◎', desc:'Presence, breath, mind-body connection. Sex as a state, not an act.' },
+  savage:     { name:'The Savage',     color:'#e03060', icon:'◆', desc:'Stamina, physicality, endurance. The body is the instrument. Tune it.' },
+  architect:  { name:'The Architect',  color:'#c07020', icon:'◌', desc:'Seduction, tension, verbal game. You build desire before you touch her.' },
+};
+
+var SKILLS = [
+  // SENSUALIST
+  { id:'headgame',    cls:'sensualist', name:'Headgame',           rank:0, maxRank:8, phase:2,
+    desc:'Oral mastery. Rhythm, pressure, tongue variation, jaw endurance. 70.4% of women require clitoral stimulation to orgasm (Herbenick 2018). Non-negotiable.',
+    how:'Tongue Endurance Drill daily for 3 weeks. Read "She Comes First" (Kerner). Log 5 partner orgasms via oral. Learn pressure mapping — ask "more, less, same?" in real time.',
+    evidence:'Herbenick (2018) N=1055: 70.4% require external clitoral stim. Consistent rhythm at climax > variation. Circular motion preferred by majority.' },
+  { id:'fingerwork',  cls:'sensualist', name:'Finger Work',        rank:0, maxRank:8, phase:2,
+    desc:'Manual stimulation — external and internal. G-zone access, curved fingers, come-hither motion, simultaneous stimulation.',
+    how:'Grip trainer daily. "The Guide to Getting It On" (Joannides) — anatomy chapter. Practice the Reach: curved fingers, 2–3 inches, anterior wall, pressure toward navel.',
+    evidence:'G-spot: distal anterior vaginal wall (Jannini 2012). Combined internal + external stimulation highest probability orgasm route.' },
+  { id:'bodyread',    cls:'sensualist', name:'Body Read',          rank:0, maxRank:8, phase:1,
+    desc:'Reading non-verbal arousal cues in real time. Breath rate, muscle tension, hip movement, vocal changes. The GPS of great sex.',
+    how:'Log 10 sessions with written observations on her non-verbal responses. "Come As You Are" (Nagoski) — arousal chapter. Practice "pressure mapping."',
+    evidence:'Mallory (2019) N=25,000: sexual communication #1 modifiable predictor of satisfaction. Reading body = communication without words.' },
+  { id:'aftercare',   cls:'sensualist', name:'Aftercare',          rank:0, maxRank:8, phase:2,
+    desc:'The post-session oxytocin window. What you do in the 20 minutes after determines bond strength more than anything inside the session.',
+    how:'20 logged aftercare sessions. "Hold Me Tight" (Sue Johnson). No phone for 20 min post-session. Water, presence, one true thing said aloud.',
+    evidence:'Ditzen (2009): oxytocin peaks post-sex and determines pair bond formation. Touch + verbal affirmation in this window = highest bonding leverage.' },
+
+  // CONDUCTOR
+  { id:'framehold',   cls:'conductor', name:'Frame Holding',       rank:0, maxRank:8, phase:1,
+    desc:'Remaining unaffected by social pressure, tests, or provocation. Staying in your own reality. The most foundational attraction skill.',
+    how:'"Models" (Manson) — vulnerability chapter. Log 20 interactions where you held frame under pressure. Practice "agree and amplify."',
+    evidence:'Kenrick & Griskevicius: status signals in social environments. Frame = the implicit status hierarchy of an interaction.' },
+  { id:'control',     cls:'conductor', name:'Ejaculatory Control', rank:0, maxRank:8, phase:2,
+    desc:'PC muscle mastery + edge training + breath brake. The most documented male sexual training outcome in peer-reviewed literature.',
+    how:'Kegel Protocol: 3 sets × 15 reps daily, 8 weeks. Edge Sessions: 4 cycles, 3×/week. Breath Brake: 4-count in, 8-count out during arousal spike.',
+    evidence:'Dorey (2005) BJU Int: 8-week pelvic floor training = significant IELT improvement. Pastore (2014) BJU: behavioral training equivalent to pharmacological intervention.' },
+  { id:'edgeplay',    cls:'conductor', name:'Edge Lord',           rank:0, maxRank:8, phase:3,
+    desc:'Holding partner at 80–95% arousal for extended periods. The most intense sustained pleasure state. Requires precise body reading and deliberate denial.',
+    how:'Requires Control at rank 4+. Log 10 edging sessions with written outcome. Partner trust 60+ required before introducing.',
+    evidence:'Extended arousal before orgasm documented to increase orgasm intensity (Masters & Johnson foundations). Requires significant trust infrastructure.' },
+  { id:'depthcont',   cls:'conductor', name:'Depth Control',       rank:0, maxRank:8, phase:2,
+    desc:'Knowing when to go deep and when to stay shallow. Cervical stimulation — pleasure for some, pain for others. Reading this in real time.',
+    how:'Ask or watch her face. Wince = back off. Arched back + pull in = go deeper. Learn the difference between a pleasure sound and a pain sound.',
+    evidence:'Anterior fornix erogenous zone (A-spot): deep stimulation can produce intense pleasure for anatomy-dependent individuals (Chua 1997).' },
+
+  // EXPLORER
+  { id:'kinkneg',     cls:'explorer', name:'Kink Negotiation',     rank:0, maxRank:8, phase:2,
+    desc:'The conversation framework that makes everything else in the Grimoire possible. Introduction, consent, boundary-setting, safewords, debrief.',
+    how:'"The Ethical Slut" (Hardy & Easton). Read the Yes/No/Maybe list framework. Practice introducing lower-intensity kinks (praise, blindfold) first. Always debrief.',
+    evidence:'Consent-based kink frameworks (Wiseman 1998). Non-consensual non-consent requires extensive relational infrastructure before it is safe to explore.' },
+  { id:'safeiqq',     cls:'explorer', name:'Safety IQ',            rank:0, maxRank:8, phase:2,
+    desc:'Safeword systems, quick-release mechanics for restraint, circulation checks, aftercare protocols for edgier play. The architecture under the kink.',
+    how:'Research: traffic light system (red/yellow/green). Physical restraints: always quick-release, 2-finger rule for circulation. Debrief within 24h of intense play.',
+    evidence:'BDSM safety literature. Bondage: nerve compression within 20 min if circulation restricted. Debrief: trauma integration window.' },
+  { id:'fantbuild',   cls:'explorer', name:'Fantasy Builder',      rank:0, maxRank:8, phase:2,
+    desc:'Constructing and proposing fantasy scenarios — roleplay, CNC framework, elaborate setups. Psychological safety creates the deepest possible play.',
+    how:'"Desire Journal" drill: 15 min weekly, stream of consciousness, no filter. Share one per week with trusted partner. Act on one new thing monthly.',
+    evidence:'Perel: "The quality of your sex life is proportional to your relationship with your own desire." Named desire must precede acted desire.' },
+
+  // ALCHEMIST
+  { id:'presence',    cls:'alchemist', name:'Full Presence',        rank:0, maxRank:8, phase:1,
+    desc:'Being completely here — not managing impressions, not in your head. Partners feel when you check out. Presence is more attractive than any technique.',
+    how:'30-day mindfulness baseline (10 min daily). "Better Sex Through Mindfulness" (Brotto). Log 10 sessions with written presence self-assessment.',
+    evidence:'Brotto (2018) RCT: mindfulness-based sexual therapy improved satisfaction scores. Attention = the foundation of all technique.' },
+  { id:'eyecon',      cls:'alchemist', name:'Eye Contact Mastery',  rank:0, maxRank:8, phase:1,
+    desc:'Sustained intentional eye contact — the primary pre-verbal signal of confidence, status, and desire. Hold through her orgasm: oxytocin peak.',
+    how:'Gaze Drill: hold 0.5s longer than comfortable in every conversation for 30 days. During sex: lock eyes at key moments. Don\'t look away first.',
+    evidence:'Phenylethylamine release during sustained mutual gaze documented (Kellerman 1989). Oxytocin surge from eye contact during intimacy.' },
+  { id:'breathwork',  cls:'alchemist', name:'Breathwork',           rank:0, maxRank:8, phase:2,
+    desc:'Breath synchronization, the breath brake (in-session control tool), tantric breath circulation. Breath is the intersection of control and presence.',
+    how:'Mantak Chia: PC pump + breath circulation. Breath Brake: 4-in, 4-hold, 8-out. Practice outside sex first. Breathe with her during intense moments.',
+    evidence:'SNS activation drives ejaculatory reflex. PNS activation (breath-triggered) delays it. Works within 3 breath cycles (documented).' },
+
+  // SAVAGE
+  { id:'strokegame',  cls:'savage', name:'Stroke Game',             rank:0, maxRank:8, phase:2,
+    desc:'Rhythm, depth, angle, pace variation during penetration. Most men use one speed. Elite strokers have five and switch based on her real-time response.',
+    how:'Learn the 5: Long Stroke (deep/slow), Short Stroke (shallow/fast), The Stir (circular), The Grind (no stroke/pressure), The Stop (complete pause). Mix based on her sound.',
+    evidence:'Position and angle changes alter G-spot contact significantly. Variety prevents habituation — the same stimulus produces diminishing arousal response.' },
+  { id:'stamina',     cls:'savage', name:'Iron Stamina',            rank:0, maxRank:8, phase:1,
+    desc:'Built not inherited. Zone 2 cardio 4×/week produces 18% IIEF improvement. This is the structural engine everything else runs on.',
+    how:'30-45 min Zone 2 cardio (120–140 BPM) 4×/week. Hip Mobility Circuit 3×/week. Kegel Protocol daily. 90-day commitment before assessing.',
+    evidence:'Gerbild (2018): 40 min moderate cardio 4×/week = 18% IIEF improvement, equivalent to mild pharmacological intervention.' },
+  { id:'positioniq',  cls:'savage', name:'Position IQ',             rank:0, maxRank:8, phase:2,
+    desc:'Knowing which position to use, when to switch, and how to transition smoothly. Choreography — flow matters as much as individual moves.',
+    how:'Know the 5 foundational positions and what each optimizes: Missionary (eye contact + CAT), Doggy (depth + G), Cowgirl (she leads), Side-lying (sustainable + intimate), Standing.',
+    evidence:'CAT (Coital Alignment Technique): missionary variation with continuous clitoral contact — documented orgasm rate increase in clinical studies (Hurlbert 1993).' },
+
+  // ARCHITECT
+  { id:'verbal',      cls:'architect', name:'Verbal Game',          rank:0, maxRank:8, phase:1,
+    desc:'Calibrated communication — dirty talk, commands, praise, narration. Most men are silent during sex. Sound activates a completely separate arousal pathway.',
+    how:'Mirror Mouth Drill: 5 min alone, say what you want to say. Start with statements ("you feel incredible"), build to commands, then narration. Lower voice 15%.',
+    evidence:'Auditory stimulation activates separate neural arousal pathways from physical stimulation. Combined stimulation compounds response.' },
+  { id:'escalation',  cls:'architect', name:'Escalation Mastery',   rank:0, maxRank:8, phase:1,
+    desc:'Moving through the escalation ladder smoothly, reading signals at each rung. Never forcing. Never hesitating when green.',
+    how:'Log 15 approaches with rung-by-rung signal assessment. "The Definitive Book of Body Language" (Pease). Green = proceed within 3 seconds. Yellow = hold, retry once.',
+    evidence:'Approach anxiety: exposure therapy model. Habituation begins at ~10 logged approaches. Signal reading improves with deliberate labeling practice.' },
+  { id:'tension',     cls:'architect', name:'Tension Building',     rank:0, maxRank:8, phase:2,
+    desc:'Creating and sustaining sexual tension — the almost-touch, the held gaze, the withheld word. By the time you act, she\'s been aching.',
+    how:'30 min of deliberate tension-building before any sexual act. Touch and redirect. Narrate what you\'re going to do — then wait. "Mating in Captivity" (Perel).',
+    evidence:'Perel: desire lives in the space between bodies, not in contact. Anticipation amplifies arousal response (Schultz 2006 — dopamine and reward prediction).' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — LOG TYPES
+// ═══════════════════════════════════════════════════════════════
+var LOG_TYPES = [
+  { id:'approach',    cat:'Social',    name:'Approach (new person)',         baseXP:60  },
+  { id:'extconvo',    cat:'Social',    name:'Extended conversation (20+ min)',baseXP:50  },
+  { id:'number',      cat:'Social',    name:'Number / contact exchanged',    baseXP:80  },
+  { id:'firstdate',   cat:'Social',    name:'First date',                    baseXP:120 },
+  { id:'seconddate',  cat:'Social',    name:'Second+ date',                  baseXP:100 },
+  { id:'rejection',   cat:'Social',    name:'Approach rejection (logged)',    baseXP:80  },
+  { id:'firstkiss',   cat:'Milestone', name:'First kiss (new person)',        baseXP:150 },
+  { id:'newpartner',  cat:'Milestone', name:'New physical partner',           baseXP:200 },
+  { id:'milstone',    cat:'Milestone', name:'Personal milestone reached',     baseXP:200 },
+  { id:'session',     cat:'Intimate',  name:'High-quality intimate session',  baseXP:100 },
+  { id:'oralgive',    cat:'Intimate',  name:'Gave oral (headgame)',           baseXP:60  },
+  { id:'partnerorg',  cat:'Intimate',  name:'Partner orgasm achieved',        baseXP:120 },
+  { id:'multiorg',    cat:'Milestone', name:'Partner multiple orgasms',       baseXP:180 },
+  { id:'aftercare',   cat:'Intimate',  name:'Aftercare performed',            baseXP:50  },
+  { id:'kinkintro',   cat:'Intimate',  name:'New kink introduced (consented)',baseXP:100 },
+  { id:'postreview',  cat:'Practice',  name:'Post-session written review',    baseXP:40  },
+  { id:'kegel',       cat:'Practice',  name:'Kegel / edge training session',  baseXP:25  },
+  { id:'gym',         cat:'Practice',  name:'Gym / Zone 2 cardio session',    baseXP:30  },
+  { id:'drill',       cat:'Practice',  name:'Skill drill completed',          baseXP:25  },
+  { id:'bookread',    cat:'Education', name:'Book read (full)',                baseXP:80  },
+  { id:'articleread', cat:'Education', name:'Article / study read',           baseXP:30  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — BOOKS / LIBRARY
+// ═══════════════════════════════════════════════════════════════
+var BOOKS = [
+  { id:'models',      name:'Models',                    author:'Mark Manson',         xp:80,  phase:1,
+    stats:{charisma:3,presence:3},  studiedSkills:['framehold','eyecon','escalation'],
+    desc:'Vulnerability-based attraction. Non-manipulative, honest. The psychological foundation this entire system rests on. The most important book in Phase 1.',
+    synthesis:'Frame holding comes from genuine non-neediness. Presence is built on authentic self-investment. Escalation is not a trick — it is calibrated honesty.' },
+  { id:'shec',        name:'She Comes First',           author:'Ian Kerner PhD',      xp:80,  phase:2,
+    stats:{technique:4},           studiedSkills:['headgame','bodyread'],
+    desc:'Reframes oral as the primary act, not the warmup. Anatomy, technique, and the philosophy of prioritizing her pleasure completely.',
+    synthesis:'Rhythm consistency beats variation at climax. Circular motion preferred by majority. Oral is the highest-probability orgasm route for most women.' },
+  { id:'comeasyou',   name:'Come As You Are',           author:'Emily Nagoski PhD',   xp:85,  phase:1,
+    stats:{mind:4,openness:3},     studiedSkills:['bodyread','presence'],
+    desc:'The brake/accelerator model of sexual response. Responsive vs. spontaneous desire. Arousal non-concordance. Changes how you read and respond to partners.',
+    synthesis:'Responsive desire (needs context and safety) is the norm for most women — not low libido. Context IS the turn-on. Remove brakes before adding accelerators.' },
+  { id:'mating',      name:'Mating in Captivity',       author:'Esther Perel',        xp:80,  phase:2,
+    stats:{charisma:3,presence:2}, studiedSkills:['tension','presence','framehold'],
+    desc:'Why desire needs distance. Maintained differentness sustains attraction. Mystery is not absence — it is selective presence.',
+    synthesis:'Erotic energy lives in the space between people. Over-availability kills desire. Maintain your own world — not as a strategy, but because you genuinely have one.' },
+  { id:'multi',       name:'The Multi-Orgasmic Man',    author:'Mantak Chia',         xp:80,  phase:2,
+    stats:{endurance:5},           studiedSkills:['control','breathwork'],
+    desc:'PC muscle mastery. Separating orgasm from ejaculation. Non-ejaculatory orgasm pathway. The physical training manual.',
+    synthesis:'The PC muscle is trainable. Ejaculatory control is a learnable skill. Energy circulation through breath allows arousal without the point of no return.' },
+  { id:'attached',    name:'Attached',                  author:'Levine & Heller',     xp:70,  phase:1,
+    stats:{mind:3,charisma:2},     studiedSkills:['framehold','aftercare'],
+    desc:'Adult attachment theory. Why anxious behavior repels. How secure baseline behavior is developed.',
+    synthesis:'Anxious attachment behavior (over-texting, performing interest) signals low value regardless of other traits. Secure behavior is learnable through pattern recognition.' },
+  { id:'guide',       name:'The Guide to Getting It On',author:'Paul Joannides',      xp:90,  phase:2,
+    stats:{technique:5,openness:3},studiedSkills:['fingerwork','headgame','positioniq'],
+    desc:'The most comprehensive technique manual available. Anatomy, oral, manual, penetration, kink. The education system never provided this.',
+    synthesis:'Anatomy knowledge directly improves technique. Most men operate on assumption and luck. This book removes both variables.' },
+  { id:'bettersex',   name:'Better Sex Through Mindfulness',author:'Lori Brotto',    xp:75,  phase:2,
+    stats:{presence:4,mind:3},     studiedSkills:['presence','breathwork','bodyread'],
+    desc:'Clinical trials on mindfulness-based sexual therapy. The science of attention as arousal amplifier.',
+    synthesis:'Mindfulness during sex = attention to sensation rather than outcome management. Performance anxiety shrinks when curiosity grows. Documented clinical improvement.' },
+  { id:'nmng',        name:'No More Mr. Nice Guy',      author:'Robert Glover',       xp:70,  phase:1,
+    stats:{charisma:4,presence:2}, studiedSkills:['framehold','escalation'],
+    desc:'Why approval-seeking behavior repels. Authentic presence vs. performance. Often the most urgent first read.',
+    synthesis:'Nice Guy behavior is covert contract-based: "If I am nice enough, she will ___." The contract is never signed by the other party. Authenticity converts better than approval-seeking in every context.' },
+  { id:'ethslut',     name:'The Ethical Slut',          author:'Hardy & Easton',      xp:80,  phase:2,
+    stats:{openness:4,mind:3},     studiedSkills:['kinkneg','safeiqq','fantbuild'],
+    desc:'Multiple partner dynamics, ethical frameworks, kink negotiation architecture.',
+    synthesis:'Every kink has a negotiation framework, a safety layer, and an aftercare requirement. Consent architecture is built before play begins.' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — QUESTS
+// ═══════════════════════════════════════════════════════════════
+var QUESTS = [
+  { id:'q_firstapproach', phase:1, minLv:1,  maxLv:10,  name:'The First Step',
+    desc:'Log your first approach. Not a number, not a date — just one conversation with someone you wouldn\'t have talked to yesterday.',
+    logType:'approach', required:1, xpReward:100,
+    why:'Exposure therapy research: habituation begins at the first approach. The anxiety of the first one is always the worst.' },
+  { id:'q_5approaches',   phase:1, minLv:1,  maxLv:15,  name:'The First Week',
+    desc:'Log 5 approaches in 7 days. Any context. Any outcome. Rejection logs earn full XP.',
+    logType:'approach', required:5, xpReward:200,
+    why:'At ~5–10 logged approaches, anxiety habituation measurably begins. You are not failing — you are building a neural pathway.' },
+  { id:'q_3kegelwks',     phase:1, minLv:5,  maxLv:20,  name:'The Foundation (Physical)',
+    desc:'Complete 21 consecutive Kegel training sessions. Log each one.',
+    logType:'kegel', required:21, xpReward:200,
+    why:'Dorey (2005): 8-week pelvic floor training = significant IELT improvement. Week 3 is when conscious control of the PC muscle begins to feel real.' },
+  { id:'q_firstdate',     phase:1, minLv:8,  maxLv:25,  name:'The Table',
+    desc:'Log a first date. Doesn\'t matter how it went. That you were there is the work.',
+    logType:'firstdate', required:1, xpReward:150,
+    why:'Social circle approach converts highest. Cold approach converts lowest. Both build the same skill: showing up. All other mechanics are secondary.' },
+  { id:'q_readmodel',     phase:1, minLv:1,  maxLv:20,  name:'The Foundation (Inner)',
+    desc:'Read "Models" by Mark Manson. Mark it in the Library. Write one thing it changed in your log.',
+    logType:'bookread', required:1, xpReward:120,
+    why:'Vulnerability-based attraction is the psychological foundation everything else builds on. Without it, every technique is performance on a hollow stage.' },
+  { id:'q_oral1',         phase:2, minLv:20, maxLv:45,  name:'Her First (From You)',
+    desc:'Log a partner orgasm achieved via oral. Write specifically what worked in your notes.',
+    logType:'partnerorg', required:1, xpReward:200,
+    why:'Herbenick (2018): 70.4% of women require clitoral stimulation for orgasm. The man who prioritizes this is already in the top percentile.' },
+  { id:'q_3aftercare',    phase:2, minLv:20, maxLv:50,  name:'The Bond Builder',
+    desc:'Log 3 aftercare sessions with written notes on what you did and her response.',
+    logType:'aftercare', required:3, xpReward:180,
+    why:'Ditzen (2009): the post-sex oxytocin window is where pair bonds form. Most men miss it entirely. Three logged aftercare sessions is a pattern forming.' },
+  { id:'q_cardio30',      phase:2, minLv:15, maxLv:40,  name:'The Engine',
+    desc:'Log 20 Zone 2 cardio sessions (30+ min each). The physical infrastructure for everything else.',
+    logType:'gym', required:20, xpReward:250,
+    why:'Gerbild (2018): consistent moderate cardio = 18% IIEF improvement. This is the unglamorous foundation. Build it first.' },
+  { id:'q_kinkneg1',      phase:2, minLv:25, maxLv:60,  name:'The Conversation',
+    desc:'Read "The Ethical Slut." Log it. Then log one kink introduction — however it went.',
+    logType:'kinkintro', required:1, xpReward:200,
+    why:'Every kink conversation, regardless of outcome, builds the vocabulary and comfort to have the next one better.' },
+  { id:'q_5reviews',      phase:2, minLv:20, maxLv:60,  name:'The Reflection Practice',
+    desc:'Log 5 post-session written reviews using the 3 questions: What worked? What didn\'t? What next time?',
+    logType:'postreview', required:5, xpReward:200,
+    why:'Deliberate practice = performance + reflection. Without reflection, you repeat the same session indefinitely. This is the highest-leverage habit.' },
+  { id:'q_multiorg',      phase:3, minLv:60, maxLv:100, name:'The Standard',
+    desc:'Log a session with partner multiple orgasms. Write the full sequence in your notes.',
+    logType:'multiorg', required:1, xpReward:300,
+    why:'Multiple orgasm capacity: the difference between a man who has studied this system and one who has embodied it.' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — DAILY DRILLS
+// ═══════════════════════════════════════════════════════════════
+var DAILY_DRILLS = [
+  { id:'gaze',    name:'Gaze Drill',      xp:15, detail:'Hold eye contact 0.5s longer than comfortable in every conversation today.' },
+  { id:'posture', name:'Posture Reset',   xp:10, detail:'Full upright, shoulders back, claim your space. Reset every time you sit.' },
+  { id:'kegel',   name:'Kegel Set',       xp:20, detail:'3 sets × 15 reps. Squeeze 3s, release 3s. Add 5 reverse kegels at the end.' },
+  { id:'mirror',  name:'Mirror Mouth',    xp:20, detail:'5 min alone: say what you want to say intimately. Lower your voice. Hold eye contact with yourself.' },
+  { id:'review',  name:'Daily Review',    xp:20, detail:'What worked today? What to adjust? One thing to try tomorrow. Written. 3 minutes.' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — QUESTIONNAIRE
+// ═══════════════════════════════════════════════════════════════
+var QUESTIONNAIRE = [
+  // SECTION 1 — Self-Perception
+  { q:'How do you primarily see yourself in sexual contexts?', options:[
+    { t:'Someone who takes control and sets the pace',     arch:{dom:3,daddy:2},       cls:{conductor:3},    stats:{charisma:2}, lv:1 },
+    { t:'Someone focused entirely on her experience',       arch:{giver:3,daddy:1},     cls:{sensualist:3},   stats:{technique:2},lv:1 },
+    { t:'Someone who reads the room and adapts',           arch:{switch:3,tantric:1},   cls:{alchemist:3},    stats:{mind:2},     lv:1 },
+    { t:'Someone who brings intensity and physical energy', arch:{savage:3,freak:1},    cls:{savage:3},       stats:{endurance:2},lv:1 },
+  ]},
+  { q:'What does success in an intimate encounter mean to you?', options:[
+    { t:'She was completely satisfied — multiple times',    arch:{giver:3,daddy:2},     cls:{sensualist:3},   stats:{technique:2},lv:1 },
+    { t:'We were both completely present and connected',    arch:{tantric:3,switch:2},  cls:{alchemist:3},    stats:{presence:2}, lv:1 },
+    { t:'The session was longer and more intense than expected',arch:{savage:3,dom:1},  cls:{savage:2,conductor:1},stats:{endurance:2},lv:1 },
+    { t:'We went somewhere we hadn\'t been before',        arch:{freak:3,switch:2},     cls:{explorer:3},     stats:{openness:2}, lv:1 },
+  ]},
+  { q:'How do you handle moments of social pressure or testing?', options:[
+    { t:'I stay calm and mildly amused — don\'t take the bait', arch:{dom:3,slowburn:2},cls:{conductor:3,architect:2},stats:{charisma:2},lv:3 },
+    { t:'I acknowledge it and try to smooth things over',   arch:{daddy:3,giver:2},     cls:{sensualist:1},   stats:{mind:2},     lv:1 },
+    { t:'I lean into it playfully',                         arch:{freak:2,switch:3},    cls:{explorer:2,architect:2},stats:{charisma:2},lv:2 },
+    { t:'I honestly struggle with this and get in my head', arch:{},                    cls:{},               stats:{},           lv:0 },
+  ]},
+  { q:'What\'s your biggest honest sexual insecurity?', options:[
+    { t:'Lasting long enough',                              arch:{savage:1},            cls:{savage:2,conductor:1},stats:{endurance:2},lv:0 },
+    { t:'Not knowing what she actually wants',              arch:{giver:1,switch:1},    cls:{sensualist:2},   stats:{mind:2},     lv:1 },
+    { t:'Performance anxiety / getting in my head',        arch:{tantric:1},            cls:{alchemist:2},    stats:{presence:2}, lv:0 },
+    { t:'Honestly, not much — I feel solid',               arch:{dom:1},               cls:{conductor:1},    stats:{charisma:1}, lv:5 },
+  ]},
+  { q:'What quality do past partners most remember about you?', options:[
+    { t:'I made them feel completely safe and cared for',   arch:{daddy:3,giver:2},     cls:{sensualist:2},   stats:{mind:2,charisma:1},lv:3 },
+    { t:'I made them feel desired and pursued',             arch:{savage:2,dom:2},      cls:{conductor:2},    stats:{charisma:2}, lv:3 },
+    { t:'I was attentive and responsive to what they needed',arch:{switch:3,giver:2},   cls:{alchemist:2},    stats:{presence:2},lv:4 },
+    { t:'I brought something new they hadn\'t experienced', arch:{freak:3,slowburn:2},  cls:{explorer:3},     stats:{openness:2}, lv:4 },
+  ]},
+
+  // SECTION 2 — Experience
+  { q:'How would you honestly rate your ejaculatory control?', options:[
+    { t:'I finish before I want to, more often than not',  arch:{},  cls:{savage:1,conductor:1},stats:{endurance:3},lv:0 },
+    { t:'Average — sometimes good, sometimes not',         arch:{},  cls:{},               stats:{endurance:2}, lv:2 },
+    { t:'Good — I can usually manage it',                  arch:{},  cls:{conductor:1},    stats:{endurance:2}, lv:5 },
+    { t:'Strong — I have real control',                    arch:{dom:1,savage:1},cls:{conductor:2},stats:{endurance:2},lv:8 },
+  ]},
+  { q:'Have you made a partner orgasm through oral?', options:[
+    { t:'No — not something I\'ve done',                   arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'Once or twice',                                   arch:{giver:1},cls:{sensualist:1},stats:{technique:1},lv:3 },
+    { t:'Regularly — it\'s a reliable skill',              arch:{giver:2},cls:{sensualist:2},stats:{technique:2},lv:7 },
+    { t:'It\'s one of my strongest assets',               arch:{giver:3},cls:{sensualist:3},stats:{technique:3},lv:10 },
+  ]},
+  { q:'How often do you train physically (gym, cardio)?', options:[
+    { t:'Rarely or never',                                 arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'1–2 times per week',                              arch:{},  cls:{},               stats:{endurance:1}, lv:2 },
+    { t:'3–4 times per week',                              arch:{savage:1},cls:{savage:1},  stats:{endurance:2}, lv:4 },
+    { t:'5+ times per week, seriously',                    arch:{savage:2},cls:{savage:2},  stats:{endurance:3}, lv:7 },
+  ]},
+  { q:'Describe your most successful approach to date:', options:[
+    { t:'I haven\'t really approached yet — it\'s a block', arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'A few times, with mixed anxiety',                 arch:{},  cls:{},               stats:{charisma:1},  lv:2 },
+    { t:'Comfortably — I\'ve had good results',            arch:{dom:1,slowburn:1},cls:{architect:1},stats:{charisma:2},lv:5 },
+    { t:'Naturally — approaching feels easy',              arch:{dom:2,switch:1},cls:{architect:2,conductor:1},stats:{charisma:3},lv:9 },
+  ]},
+  { q:'Have you ever performed aftercare consciously?', options:[
+    { t:'What is aftercare?',                              arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'I\'ve stayed but never intentionally',            arch:{},  cls:{},               stats:{mind:1},      lv:1 },
+    { t:'Yes — a few times',                               arch:{daddy:2,giver:1},cls:{sensualist:1},stats:{mind:2},lv:3 },
+    { t:'Always — it\'s non-negotiable for me',            arch:{daddy:3,tantric:2},cls:{sensualist:2,alchemist:1},stats:{mind:3},lv:6 },
+  ]},
+
+  // SECTION 3 — Desires
+  { q:'What fantasy occupies your mind most?', options:[
+    { t:'Complete control — she surrenders entirely to me', arch:{dom:3,daddy:1},cls:{conductor:3},stats:{charisma:1,openness:2},lv:1 },
+    { t:'Giving her the best experience of her life',       arch:{giver:3},     cls:{sensualist:3},stats:{technique:1,openness:1},lv:1 },
+    { t:'Something transgressive that requires trust',      arch:{freak:3,switch:1},cls:{explorer:3},stats:{openness:3},lv:1 },
+    { t:'A connection so deep it feels otherworldly',       arch:{tantric:3,daddy:1},cls:{alchemist:3},stats:{presence:2,mind:1},lv:1 },
+  ]},
+  { q:'How do you feel about kink and BDSM?', options:[
+    { t:'Not for me — I prefer straightforward intimacy',  arch:{giver:1,tantric:1},cls:{sensualist:1},stats:{},lv:1 },
+    { t:'Curious but haven\'t explored much',              arch:{freak:1,switch:1}, cls:{explorer:1}, stats:{openness:2},lv:1 },
+    { t:'I\'ve explored some and enjoyed it',              arch:{freak:2,dom:2},    cls:{explorer:2,conductor:1},stats:{openness:2},lv:4 },
+    { t:'It\'s a significant part of my intimate life',    arch:{freak:3,dom:3},    cls:{explorer:3,conductor:2},stats:{openness:3},lv:7 },
+  ]},
+  { q:'What makes you most aroused during sex?', options:[
+    { t:'Her reactions — sounds, expressions, response to me',arch:{giver:3,daddy:2},cls:{sensualist:2},stats:{mind:2},lv:1 },
+    { t:'The intensity — physical sensation and force',     arch:{savage:3,dom:2},  cls:{savage:2,conductor:1},stats:{endurance:2},lv:1 },
+    { t:'The connection — deep eye contact, breath, presence',arch:{tantric:3,switch:2},cls:{alchemist:3},stats:{presence:2},lv:1 },
+    { t:'The tension — the buildup, the almost, the wait',  arch:{slowburn:3,freak:1},cls:{architect:3},stats:{charisma:2},lv:1 },
+  ]},
+  { q:'Is there a kink or fantasy you\'ve never acted on but want to?', options:[
+    { t:'No — I prefer to stay in familiar territory',     arch:{},  cls:{},               stats:{mind:1},      lv:1 },
+    { t:'Yes — but I\'ve never found the right person/moment',arch:{freak:1,switch:1},cls:{explorer:1},stats:{openness:2},lv:2 },
+    { t:'Yes — and I\'m actively building toward it',      arch:{freak:2,slowburn:1},cls:{explorer:2},stats:{openness:2},lv:3 },
+    { t:'Multiple — I have a specific fantasy map',        arch:{freak:3,switch:2},  cls:{explorer:3},stats:{openness:3,mind:2},lv:5 },
+  ]},
+  { q:'How important is emotional connection to your sexual experience?', options:[
+    { t:'Not very — the physical is what matters',         arch:{savage:2},cls:{savage:1},  stats:{endurance:1}, lv:1 },
+    { t:'Somewhat — nice but not required',                arch:{dom:1,freak:1},cls:{conductor:1},stats:{charisma:1},lv:1 },
+    { t:'Very — it significantly changes the quality',     arch:{daddy:2,giver:2,tantric:2},cls:{sensualist:1,alchemist:2},stats:{mind:2,presence:1},lv:1 },
+    { t:'It is the experience — without it there\'s nothing',arch:{tantric:3,daddy:2},cls:{alchemist:3},stats:{presence:3,mind:2},lv:1 },
+  ]},
+
+  // SECTION 4 — Partner Dynamics
+  { q:'How do you naturally communicate during sex?', options:[
+    { t:'Quietly — I let my actions speak',                arch:{},  cls:{},               stats:{technique:1}, lv:1 },
+    { t:'I ask how she\'s doing — "is this good?"',        arch:{giver:2,daddy:1},cls:{sensualist:1},stats:{mind:2,charisma:1},lv:2 },
+    { t:'I narrate, command, or praise — verbally engaged',arch:{dom:2,daddy:2},  cls:{conductor:2,architect:2},stats:{charisma:3},lv:4 },
+    { t:'I breathe with her, eye contact — connected without speaking',arch:{tantric:3},cls:{alchemist:3},stats:{presence:3},lv:3 },
+  ]},
+  { q:'When she signals something isn\'t working, you:', options:[
+    { t:'Often miss the signal',                           arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'Notice it but feel unsure how to adjust',         arch:{},  cls:{},               stats:{mind:1},      lv:1 },
+    { t:'Adjust in real time and ask afterward what worked',arch:{giver:2,switch:2},cls:{sensualist:1,alchemist:1},stats:{mind:2},lv:4 },
+    { t:'Read it before she needs to signal and am already adjusting',arch:{switch:3,tantric:2},cls:{alchemist:3},stats:{presence:2,mind:2},lv:7 },
+  ]},
+  { q:'Your ideal partner dynamic is:', options:[
+    { t:'She follows my lead completely',                   arch:{dom:3,daddy:2},cls:{conductor:3},stats:{charisma:2},lv:1 },
+    { t:'I give everything to her',                        arch:{giver:3},     cls:{sensualist:3},stats:{technique:2},lv:1 },
+    { t:'We take turns leading',                           arch:{switch:3},    cls:{alchemist:2},  stats:{mind:2,presence:1},lv:1 },
+    { t:'She meets me at the edge',                        arch:{freak:2,savage:2},cls:{explorer:2,savage:1},stats:{openness:2},lv:1 },
+  ]},
+  { q:'How long does your average intimate session last?', options:[
+    { t:'Under 15 minutes',                                arch:{},  cls:{},               stats:{endurance:3},  lv:0 },
+    { t:'15–30 minutes',                                   arch:{},  cls:{},               stats:{endurance:2},  lv:2 },
+    { t:'30–60 minutes',                                   arch:{savage:1},cls:{savage:1},  stats:{endurance:1},  lv:5 },
+    { t:'60+ minutes regularly',                           arch:{savage:2,tantric:2},cls:{savage:2,alchemist:1},stats:{endurance:1},lv:9 },
+  ]},
+  { q:'Do you practice Kegel exercises?', options:[
+    { t:'No, and I\'m not sure what they are',             arch:{},  cls:{},               stats:{endurance:2},  lv:0 },
+    { t:'I\'ve tried but not consistently',                arch:{},  cls:{},               stats:{endurance:1},  lv:1 },
+    { t:'Yes — several times a week',                      arch:{},  cls:{conductor:1},    stats:{endurance:1},  lv:5 },
+    { t:'Daily — it\'s a non-negotiable habit',            arch:{dom:1,savage:1},cls:{conductor:1,savage:1},stats:{endurance:1},lv:8 },
+  ]},
+
+  // SECTION 5 — Self-Knowledge
+  { q:'Have you read anything deliberately about sex, attraction, or relationships?', options:[
+    { t:'No — I\'m figuring it out as I go',               arch:{},  cls:{},               stats:{},            lv:0 },
+    { t:'A few articles here and there',                   arch:{},  cls:{},               stats:{mind:1},       lv:1 },
+    { t:'Several books — I take this seriously',           arch:{switch:1,tantric:1},cls:{alchemist:1},stats:{mind:2,openness:1},lv:5 },
+    { t:'Extensively — it\'s an ongoing practice',         arch:{switch:2,tantric:2},cls:{alchemist:2},stats:{mind:3,openness:2},lv:9 },
+  ]},
+  { q:'How do you feel about your physical fitness as it relates to sex?', options:[
+    { t:'It\'s holding me back — I get tired',             arch:{},  cls:{},               stats:{endurance:3},  lv:0 },
+    { t:'Average — could be better',                       arch:{},  cls:{},               stats:{endurance:2},  lv:2 },
+    { t:'Good — I can sustain what I need to',             arch:{savage:1},cls:{savage:1},  stats:{endurance:1},  lv:5 },
+    { t:'Strong — fitness is a priority I maintain',       arch:{savage:2},cls:{savage:2},  stats:{endurance:1},  lv:8 },
+  ]},
+  { q:'How would you describe your natural sensitivity?', options:[
+    { t:'Very sensitive — control is my biggest challenge', arch:{},  cls:{conductor:2},   stats:{endurance:3},  lv:1 },
+    { t:'Moderately sensitive — manageable',               arch:{},  cls:{},               stats:{endurance:1},  lv:3 },
+    { t:'Low sensitivity — I rarely struggle with control', arch:{savage:1},cls:{savage:1}, stats:{},             lv:5 },
+    { t:'Variable — depends on the situation',             arch:{switch:1},cls:{},          stats:{mind:1},       lv:2 },
+  ]},
+  { q:'Do you perform written post-session reviews?', options:[
+    { t:'No — never thought about it',                     arch:{},  cls:{},               stats:{},             lv:0 },
+    { t:'I think about it mentally',                       arch:{},  cls:{},               stats:{mind:1},        lv:2 },
+    { t:'Occasionally in writing',                         arch:{switch:1,tantric:1},cls:{alchemist:1},stats:{mind:2},lv:4 },
+    { t:'Always — it\'s how I improve',                    arch:{switch:2,giver:1},cls:{sensualist:1,alchemist:2},stats:{mind:3},lv:7 },
+  ]},
+  { q:'What one improvement would most change your intimate life?', options:[
+    { t:'More stamina / control',                          arch:{},  cls:{conductor:2,savage:2},stats:{endurance:3},lv:0 },
+    { t:'Better technique — oral and manual',              arch:{giver:1},cls:{sensualist:3},stats:{technique:3}, lv:0 },
+    { t:'More confidence approaching and escalating',      arch:{dom:1},cls:{architect:2,conductor:1},stats:{charisma:3},lv:0 },
+    { t:'Deeper presence and emotional connection',        arch:{tantric:1,daddy:1},cls:{alchemist:3},stats:{presence:3,mind:2},lv:0 },
+  ]},
+  { q:'Finally — what brought you to a system like this?', options:[
+    { t:'I want to become genuinely excellent',            arch:{},  cls:{},               stats:{mind:2,charisma:1},lv:2 },
+    { t:'A specific experience I want to do better',       arch:{},  cls:{},               stats:{mind:1,technique:1},lv:1 },
+    { t:'I\'ve hit a ceiling and need structure',          arch:{},  cls:{},               stats:{mind:2},            lv:3 },
+    { t:'I\'m curious — I want to understand this domain', arch:{},  cls:{},               stats:{mind:2,openness:2},  lv:1 },
+  ]},
+];
+
+// Quest state tracker
+function getQuestProgress(q) {
+  var ct = STATE.logs.filter(function(l){ return l.type === q.logType; }).length;
+  return Math.min(ct, q.required);
+}
+function isQuestComplete(q) { return getQuestProgress(q) >= q.required; }
+function getAvailableQuests() {
+  var lv = getLevel(STATE.xp);
+  var phase = getPhase(lv);
+  return QUESTS.filter(function(q) {
+    return q.phase <= phase && lv >= q.minLv && !isQuestComplete(q);
+  }).slice(0,3);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDERING HELPERS
+// ═══════════════════════════════════════════════════════════════
+function el(id){ return document.getElementById(id); }
+function html(id, content){ el(id).innerHTML = content; }
+
+function pill(label, color, bg) {
+  return '<span class="tag" style="border-color:' + color + '55;color:' + color + ';background:' + (bg||color+'10') + '">' + sanitize(label) + '</span>';
+}
+
+function bar(val, color, label) {
+  return (label ? '<div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:12px;color:var(--dim)">' + sanitize(label) + '</span><span style="font-family:\'Space Mono\',monospace;font-size:12px;color:' + color + '">' + val + '</span></div>' : '') +
+    '<div class="bar"><div class="barfill" style="width:' + Math.min(val,100) + '%;background:' + color + '"></div></div>';
+}
+
+function starRating(n, max, color) {
+  var s = '';
+  for (var i = 0; i < max; i++) s += '<span class="star" style="color:' + (i<n?color:'var(--b2)') + '">★</span>';
+  return '<span class="stars">' + s + '</span>';
+}
+
+var STAT_CFG = [
+  {k:'charisma',  l:'Charisma',      c:'var(--pink)'},
+  {k:'presence',  l:'Presence',      c:'var(--teal)'},
+  {k:'technique', l:'Technique',     c:'var(--rose)'},
+  {k:'endurance', l:'Endurance',     c:'var(--amber)'},
+  {k:'mind',      l:'Emotional IQ',  c:'var(--violet)'},
+  {k:'openness',  l:'Openness',      c:'var(--cyan)'},
+];
+
+var CAT_COLORS = {
+  Social:'var(--rose)', Intimate:'var(--violet)', Practice:'var(--teal)',
+  Education:'var(--blue)', Milestone:'var(--gold)', Other:'var(--muted)'
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════════════════════
+var DAY_FOCUS = [
+  {t:'Eye Contact',    c:'var(--teal)',  b:'Hold gaze 0.5s longer than comfortable in every conversation. Do not look away first. This is the primary pre-verbal signal of status.'},
+  {t:'Physical Space', c:'var(--amber)', b:'Take up your full physical space. Shoulders back, chest open. Move with intention. Reset every time you catch yourself slumped.'},
+  {t:'One Approach',   c:'var(--rose)',  b:'Initiate one conversation you wouldn\'t have started yesterday. Any context. Any outcome. Rejection earns the same XP as a number.'},
+  {t:'Full Listening', c:'var(--violet)',b:'Phone away. Full attention. Respond to what was actually said, not what you expected. Partners feel when you check out.'},
+  {t:'Voice',          c:'var(--gold)',  b:'Speak 20% slower and 15% lower than usual. Volume is not authority. Pace and depth are. Notice how the room responds.'},
+  {t:'End First',      c:'var(--cyan)',  b:'In every interaction today — end it before the energy drops. Leave people wanting more. This applies to texts, conversations, dates.'},
+  {t:'Posture Chain',  c:'var(--pink)',  b:'Every time you catch yourself slumped or closed off — reset. Posture is a habit installed through repetition, not willpower.'},
+];
+
+function renderHome() {
+  var xp = STATE.xp;
+  var lv = getLevel(xp);
+  var pct = getLevelPct(xp);
+  var phase = getPhase(lv);
+  var nextLvXP = totalXPForLevel(lv + 1);
+  var curLvXP = totalXPForLevel(lv);
+
+  el('hlv').textContent = lv;
+  el('hrank').textContent = getRank(lv);
+  el('hxp').textContent = (xp - curLvXP) + ' / ' + (nextLvXP - curLvXP) + ' XP';
+  el('xpbar').style.width = pct + '%';
+
+  // Phase indicator
+  var phaseColor = phase===1?'var(--phase1)':phase===2?'var(--phase2)':'var(--phase3)';
+  var phaseLabel = phase===1?'Phase I — Foundation':'Phase II — Skill Development';
+  if(phase===3) phaseLabel='Phase III — Mastery';
+  var dots = '<div class="phasetrack">' +
+    '<div class="phasedot" style="background:' + (phase>=1?'var(--phase1)':'var(--s3)') + '"></div>' +
+    '<div class="phasedot" style="background:' + (phase>=2?'var(--phase2)':'var(--s3)') + '"></div>' +
+    '<div class="phasedot" style="background:' + (phase>=3?'var(--phase3)':'var(--s3)') + '"></div>' +
+    '</div><div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + phaseColor + '">' + phaseLabel + '</div>';
+  el('hphase').innerHTML = dots;
+
+  // Setup prompt
+  if (!STATE.questDone) {
+    el('hsetup').style.display = '';
+    el('hsetup').innerHTML = '<div class="card accent" style="margin-bottom:18px">' +
+      '<div style="font-size:11px;font-family:\'Space Mono\',monospace;color:var(--pink);margin-bottom:8px">FIRST: BUILD YOUR PROFILE</div>' +
+      '<p class="cbody" style="margin-bottom:12px">Complete the questionnaire to set your archetype, starting stats, and find your entry point in the system.</p>' +
+      '<button class="btn fill" onclick="startQuestionnaire()">Begin Questionnaire →</button></div>';
+  } else {
+    el('hsetup').style.display = 'none';
+  }
+
+  // Day focus
+  var dayF = DAY_FOCUS[new Date().getDay() % DAY_FOCUS.length];
+  el('hfocus').innerHTML = '<div class="card" style="border-color:' + dayF.c + '44">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + dayF.c + ';margin-bottom:5px">' +
+    new Date().toLocaleDateString('en',{weekday:'long'}).toUpperCase() + ' FOCUS</div>' +
+    '<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:5px">' + dayF.t + '</div>' +
+    '<div class="cbody">' + dayF.b + '</div></div>';
+
+  // Active quest
+  var quests = getAvailableQuests();
+  if (quests.length === 0) {
+    el('hquest').innerHTML = '<div class="card" style="text-align:center;color:var(--muted);font-style:italic;font-size:13px;padding:18px">All available quests complete. Keep logging.</div>';
+  } else {
+    var q = quests[0];
+    var prog = getQuestProgress(q);
+    var pct2 = Math.round((prog / q.required) * 100);
+    el('hquest').innerHTML = '<div class="qcard active">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
+      '<div style="font-size:14px;font-weight:700;color:var(--gold)">' + sanitize(q.name) + '</div>' +
+      '<div style="font-family:\'Space Mono\',monospace;font-size:12px;color:var(--gold)">' + prog + '/' + q.required + '</div></div>' +
+      '<div class="cbody" style="margin-bottom:10px">' + sanitize(q.desc) + '</div>' +
+      '<div class="bar"><div class="barfill" style="width:' + pct2 + '%;background:var(--gold)"></div></div>' +
+      '<div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:italic">+' + q.xpReward + ' XP on completion</div></div>';
+  }
+
+  // Checks
+  renderDailyChecks();
+
+  // Recent log
+  if (STATE.logs.length === 0) {
+    el('hlog').innerHTML = '<div style="text-align:center;padding:22px;color:var(--muted);font-style:italic;font-size:13px">Nothing logged yet.<br>The log is the center of the system. Start here.</div>';
+  } else {
+    var logHtml = '';
+    STATE.logs.slice(0,3).forEach(function(l) {
+      var lt = LOG_TYPES.find(function(t){return t.id===l.type;});
+      var cc = CAT_COLORS[l.cat]||'var(--muted)';
+      logHtml += '<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1)">' +
+        '<span style="font-family:\'Space Mono\',monospace;font-size:10px;color:var(--muted);min-width:55px;flex-shrink:0">' + sanitize(l.date) + '</span>' +
+        '<span style="flex:1;font-size:13px;color:var(--dim)">' + sanitize(lt?lt.name:l.type) + '</span>' +
+        '<span style="font-family:\'Space Mono\',monospace;font-size:12px;color:var(--gold)">+' + l.xp + '</span></div>';
+    });
+    el('hlog').innerHTML = logHtml;
+  }
+}
+
+function renderDailyChecks() {
+  var today = new Date().toDateString();
+  if (STATE.checkDate !== today) { STATE.checks = {}; STATE.checkDate = today; save(); }
+  var chkEl = el('hchecks');
+  var h = '';
+  DAILY_DRILLS.forEach(function(d) {
+    var done = STATE.checks[d.id];
+    h += '<div class="chk" data-drill="' + d.id + '" data-xp="' + d.xp + '">' +
+      '<div class="chkbox ' + (done?'done':'') + '">' + (done?'✓':'') + '</div>' +
+      '<div style="flex:1">' +
+      '<div style="font-size:14px;font-weight:' + (done?'400':'600') + ';color:' + (done?'var(--muted)':'var(--text)') + ';text-decoration:' + (done?'line-through':'none') + '">' + sanitize(d.name) + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:2px">' + sanitize(d.detail) + '</div>' +
+      '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + (done?'var(--muted)':'var(--gold)') + ';margin-top:3px">+' + d.xp + ' XP</div></div></div>';
+  });
+  chkEl.innerHTML = h;
+  chkEl.querySelectorAll('.chk').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var id = this.dataset.drill, xp = parseInt(this.dataset.xp);
+      if (STATE.checks[id]) return;
+      STATE.checks[id] = true;
+      var d = DAILY_DRILLS.find(function(x){return x.id===id;});
+      addXP(xp, '✓ ' + (d?d.name:id));
+      renderDailyChecks();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  QUESTIONNAIRE
+// ═══════════════════════════════════════════════════════════════
+var QSTATE = { step:0, answers:[], scores:{ arch:{}, cls:{}, stats:{charisma:0,presence:0,technique:0,endurance:0,mind:0,openness:0}, lv:0 } };
+
+function startQuestionnaire() {
+  QSTATE = { step:0, answers:[], scores:{arch:{},cls:{},stats:{charisma:0,presence:0,technique:0,endurance:0,mind:0,openness:0},lv:0} };
+  goPage('profile');
+  renderProfile();
+}
+
+function renderQuestionnaire() {
+  if (QSTATE.step >= QUESTIONNAIRE.length) { finishQuestionnaire(); return; }
+  var q = QUESTIONNAIRE[QSTATE.step];
+  var prog = Math.round((QSTATE.step / QUESTIONNAIRE.length) * 100);
+  var sec = QSTATE.step < 5 ? 'SELF-PERCEPTION' : QSTATE.step < 10 ? 'PAST EXPERIENCE' : QSTATE.step < 15 ? 'DESIRES' : QSTATE.step < 20 ? 'PARTNER DYNAMICS' : 'SELF-KNOWLEDGE';
+  var secs = ['SELF-PERCEPTION','PAST EXPERIENCE','DESIRES','PARTNER DYNAMICS','SELF-KNOWLEDGE'];
+  var secIdx = Math.floor(QSTATE.step / 5);
+  var h = '<div style="margin-bottom:18px">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:6px">' +
+    '<span style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--pink)">' + sec + '</span>' +
+    '<span style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--muted)">' + (QSTATE.step+1) + ' / ' + QUESTIONNAIRE.length + '</span></div>' +
+    '<div class="xpwrap"><div class="xpbar" style="width:' + prog + '%"></div></div>' +
+    '<div style="display:flex;gap:3px;margin-top:6px">' +
+    secs.map(function(s,i){ return '<div style="flex:1;height:2px;border-radius:1px;background:' + (i<=secIdx?'var(--pink)':'var(--s3)') + '"></div>'; }).join('') +
+    '</div></div>' +
+    '<div style="font-size:16px;font-weight:600;color:var(--cream);margin-bottom:16px;line-height:1.5">' + sanitize(q.q) + '</div>';
+  q.options.forEach(function(opt, i) {
+    var sel = QSTATE.answers[QSTATE.step] === i;
+    h += '<div class="qopt ' + (sel?'sel':'') + '" data-opt="' + i + '">' +
+      '<div class="qopt-dot">' + (sel?'✓':'') + '</div>' +
+      '<div style="font-size:14px;color:var(--dim);line-height:1.5">' + sanitize(opt.t) + '</div></div>';
+  });
+  if (QSTATE.step > 0) {
+    h += '<div style="margin-top:14px"><button class="btn muted sm" onclick="qBack()">← Back</button></div>';
+  }
+  el('profbody').innerHTML = h;
+  el('profbody').querySelectorAll('.qopt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      var i = parseInt(this.dataset.opt);
+      QSTATE.answers[QSTATE.step] = i;
+      var o = QUESTIONNAIRE[QSTATE.step].options[i];
+      // Apply weights
+      Object.keys(o.arch||{}).forEach(function(k){ QSTATE.scores.arch[k]=(QSTATE.scores.arch[k]||0)+o.arch[k]; });
+      Object.keys(o.cls||{}).forEach(function(k){ QSTATE.scores.cls[k]=(QSTATE.scores.cls[k]||0)+o.cls[k]; });
+      Object.keys(o.stats||{}).forEach(function(k){ QSTATE.scores.stats[k]=(QSTATE.scores.stats[k]||0)+(o.stats[k]||0); });
+      QSTATE.scores.lv += (o.lv||0);
+      QSTATE.step++;
+      setTimeout(function(){ renderQuestionnaire(); }, 120);
+    });
+  });
+}
+
+function qBack() {
+  if (QSTATE.step === 0) return;
+  // Subtract the last answer's weights
+  var prevStep = QSTATE.step - 1;
+  var prevAns = QSTATE.answers[prevStep];
+  if (prevAns !== undefined) {
+    var o = QUESTIONNAIRE[prevStep].options[prevAns];
+    Object.keys(o.arch||{}).forEach(function(k){ QSTATE.scores.arch[k]=(QSTATE.scores.arch[k]||0)-o.arch[k]; });
+    Object.keys(o.cls||{}).forEach(function(k){ QSTATE.scores.cls[k]=(QSTATE.scores.cls[k]||0)-o.cls[k]; });
+    Object.keys(o.stats||{}).forEach(function(k){ QSTATE.scores.stats[k]=(QSTATE.scores.stats[k]||0)-(o.stats[k]||0); });
+    QSTATE.scores.lv -= (o.lv||0);
+    QSTATE.answers.splice(prevStep, 1);
+  }
+  QSTATE.step = prevStep;
+  renderQuestionnaire();
+}
+
+function finishQuestionnaire() {
+  // Find top archetype
+  var archScores = QSTATE.scores.arch;
+  var topArch = null, topArchScore = 0;
+  Object.keys(archScores).forEach(function(k){ if(archScores[k]>topArchScore){topArchScore=archScores[k];topArch=k;} });
+  // Find top class
+  var clsScores = QSTATE.scores.cls;
+  var topCls = null, topClsScore = 0;
+  Object.keys(clsScores).forEach(function(k){ if(clsScores[k]>topClsScore){topClsScore=clsScores[k];topCls=k;} });
+  // Apply stats (map 0–30 questionnaire points → 20–60 starting stat)
+  var statKeys = ['charisma','presence','technique','endurance','mind','openness'];
+  statKeys.forEach(function(k) {
+    var raw = QSTATE.scores.stats[k]||0;
+    var mapped = Math.round(20 + Math.min(raw, 30));
+    STATE.stats[k] = Math.min(Math.max(mapped, 20), 65);
+  });
+  // Estimate starting level (0–100 scale from questionnaire lv points, max ~60, map to 1–15)
+  var rawLv = Math.min(QSTATE.scores.lv, 80);
+  var startLv = Math.max(1, Math.round((rawLv / 80) * 15));
+  var xpForStartLv = totalXPForLevel(startLv);
+  STATE.xp = Math.max(STATE.xp, xpForStartLv);
+  // Apply archetype and class
+  if (topArch) STATE.arch = topArch;
+  STATE.questDone = true;
+  STATE.questAnswers = QSTATE.answers;
+  save();
+  // Show result
+  var arch = ARCHETYPES.find(function(a){return a.id===topArch;});
+  var cls = topCls ? CLASS_META[topCls] : null;
+  var lv = getLevel(STATE.xp);
+  var h = '<div class="card accent" style="text-align:center;margin-bottom:16px">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--pink);margin-bottom:8px">YOUR PROFILE</div>' +
+    '<div style="font-size:48px;margin-bottom:6px">' + (arch?arch.icon:'◎') + '</div>' +
+    '<div style="font-size:22px;font-weight:700;color:var(--cream);margin-bottom:4px">' + (arch?sanitize(arch.name):'Unknown') + '</div>' +
+    '<div style="font-size:12px;font-family:\'Space Mono\',monospace;color:var(--dim);margin-bottom:12px">' + (arch?sanitize(arch.vibe):'') + '</div>' +
+    '<div style="font-size:28px;font-family:\'Space Mono\',monospace;font-weight:700;color:var(--pink);margin-bottom:4px">Level ' + lv + '</div>' +
+    '<div style="font-size:12px;color:var(--muted)">' + getRank(lv) + '</div></div>';
+  if (cls) {
+    h += '<div class="card" style="border-color:' + cls.color + '55;margin-bottom:14px">' +
+      '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + cls.color + ';margin-bottom:5px">PRIMARY CLASS AFFINITY</div>' +
+      '<div style="font-size:18px;font-weight:700;color:' + cls.color + ';margin-bottom:4px">' + cls.icon + ' ' + sanitize(cls.name) + '</div>' +
+      '<div class="cbody">' + sanitize(cls.desc) + '</div></div>';
+  }
+  h += '<div class="card" style="margin-bottom:16px">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:10px">STARTING STATS</div>' +
+    STAT_CFG.map(function(s){ return bar(STATE.stats[s.k], s.c, s.l) + '<div style="margin-bottom:8px"></div>'; }).join('') +
+    '</div>' +
+    (arch ? '<div class="card teal">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--teal);margin-bottom:8px">YOUR PHASE I GUIDANCE</div>' +
+    '<div class="cbody">' + sanitize(arch.phase1) + '</div></div>' : '') +
+    '<div class="btn-row" style="margin-top:16px">' +
+    '<button class="btn fill" onclick="goPage(\'home\')">Begin →</button>' +
+    '<button class="btn muted" onclick="startQuestionnaire()">Retake</button></div>';
+  el('profbody').innerHTML = h;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROFILE
+// ═══════════════════════════════════════════════════════════════
+function renderProfile() {
+  if (!STATE.questDone) { renderQuestionnaire(); return; }
+  var lv = getLevel(STATE.xp);
+  var phase = getPhase(lv);
+  var arch = ARCHETYPES.find(function(a){return a.id===STATE.arch;});
+  var phaseGuidance = arch ? (phase===1?arch.phase1:phase===2?arch.phase2:arch.phase3) : '';
+  var phaseColor = phase===1?'var(--phase1)':phase===2?'var(--phase2)':'var(--phase3)';
+  var phaseLabel = ['','Phase I — Foundation','Phase II — Skill Development','Phase III — Mastery'][phase];
+
+  var h = '';
+
+  // Archetype card
+  if (arch) {
+    h += '<div class="card" style="border-color:' + arch.color + '55;background:' + arch.color + '08;margin-bottom:14px">' +
+      '<div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">' +
+      '<div style="font-size:42px">' + arch.icon + '</div>' +
+      '<div><div style="font-size:20px;font-weight:700;color:' + arch.color + '">' + sanitize(arch.name) + '</div>' +
+      '<div style="font-size:11px;font-family:\'Space Mono\',monospace;color:var(--dim)">' + sanitize(arch.vibe) + '</div></div></div>' +
+      '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:6px">WHAT SHE NOTICES</div>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">' +
+      arch.keys.map(function(k){ return pill(k, arch.color); }).join('') + '</div>' +
+      '<div style="background:var(--s3);border-radius:6px;padding:11px">' +
+      '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + phaseColor + ';margin-bottom:5px">' + phaseLabel.toUpperCase() + ' GUIDANCE</div>' +
+      '<div class="cbody">' + sanitize(phaseGuidance) + '</div></div></div>';
+  }
+
+  // Class evolution roadmap
+  h += '<div class="card gold" style="margin-bottom:14px">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--gold);margin-bottom:10px">CLASS EVOLUTION ROADMAP</div>' +
+    [
+      {lv:1,  label:'Entry',      desc:'Questionnaire complete. Stats set. Journey begins.', c:'var(--teal)'},
+      {lv:20, label:'Evolved I',  desc:'Phase I complete. Foundation is real. Technique begins.', c:'var(--rose)'},
+      {lv:40, label:'Evolved II', desc:'Archetype deepens. Signature skills unlock. Class mastery possible.', c:'var(--gold)'},
+      {lv:70, label:'Evolved III',desc:'Advanced class. Most partners will feel the difference.', c:'var(--violet)'},
+      {lv:100,label:'Transcendent',desc:'Special class unlock. Your unique synthesis. Three paths available.', c:'var(--pink)'},
+    ].map(function(m) {
+      var reached = lv >= m.lv;
+      return '<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--b1)">' +
+        '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + (reached?m.c:'var(--muted)') + ';min-width:30px;flex-shrink:0;margin-top:2px">Lv' + m.lv + '</div>' +
+        '<div style="flex:1">' +
+        '<div style="font-size:13px;font-weight:' + (reached?700:400) + ';color:' + (reached?m.c:'var(--muted)') + '">' + (reached?'✦ ':'○ ') + m.label + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin-top:1px">' + m.desc + '</div></div></div>';
+    }).join('') + '</div>';
+
+  // Stats
+  h += '<div class="card" style="margin-bottom:14px">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:12px">YOUR STATS</div>' +
+    STAT_CFG.map(function(s) {
+      var v = STATE.stats[s.k]||0;
+      return '<div style="margin-bottom:10px">' + bar(v, s.c, s.l) + '</div>';
+    }).join('') + '</div>';
+
+  // Archetype selector
+  h += '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:10px;letter-spacing:.15em">CHANGE ARCHETYPE</div>' +
+    '<div class="archgrid">' +
+    ARCHETYPES.map(function(a) {
+      var on = STATE.arch === a.id;
+      return '<div class="archcard ' + (on?'on':'') + '" data-arch="' + a.id + '" ' +
+        'style="' + (on?'border-color:'+a.color+';background:'+a.color+'18':'') + '">' +
+        '<div class="archico">' + a.icon + '</div>' +
+        '<div class="archnm" style="color:' + (on?a.color:'var(--dim)') + '">' + sanitize(a.name) + '</div></div>';
+    }).join('') + '</div>' +
+    '<div class="btn-row"><button class="btn muted sm" onclick="startQuestionnaire()">Retake Questionnaire</button></div>';
+
+  // MY PREFERENCES — feeds compatibility engine
+  var myBg = CULTURAL_BG ? CULTURAL_BG.find(function(b){return b.id===STATE.myBackground;}) : null;
+  var myAllKinks = (STATE.myKinks||[]).concat(STATE.myFetishes||[]).concat(STATE.myFantasies||[]);
+  var allKD = (typeof KINKS!=='undefined'?KINKS:[]).concat(typeof FETISHES!=='undefined'?FETISHES:[]).concat(typeof FANTASIES!=='undefined'?FANTASIES:[]);
+  h += '<div id="prof-prefs" style="margin-top:6px">';
+  h += '<div class="sec" style="margin-top:16px">MY PREFERENCES <span style="font-size:9px;color:var(--muted);font-weight:normal;letter-spacing:.05em">— feeds Partner compatibility engine</span></div>';
+  h += '<div class="card" style="border-color:var(--teal)33;margin-bottom:10px"><div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--teal);margin-bottom:8px;letter-spacing:.12em">YOUR CULTURAL BACKGROUND</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
+    CULTURAL_BG.map(function(bg){
+      var on = STATE.myBackground===bg.id;
+      return '<div class="cultopt '+(on?'on':'')+'" data-mybgid="'+bg.id+'">'+sanitize(bg.name)+'</div>';
+    }).join('') + '</div></div>';
+  h += '<div class="card" style="margin-bottom:10px"><div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:8px">YOUR KINKS / FETISHES / FANTASIES</div>';
+  if (myAllKinks.length === 0) {
+    h += '<div style="color:var(--muted);font-style:italic;font-size:13px;margin-bottom:8px">None set yet. Browse the Kinks, Fetishes, and Fantasies sections in the Field & Library tab to add yours.</div>';
+  } else {
+    h += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">';
+    myAllKinks.forEach(function(kid) {
+      var k = allKD.find(function(x){return x.id===kid;});
+      if (k) h += '<span class="tag" style="border-color:var(--pink)55;color:var(--pink);background:var(--pink)10">'+sanitize(k.name)+'</span>';
+    });
+    h += '</div>';
+  }
+  h += '<button class="btn sm muted" onclick="goPage(\'field\');STATE.fieldTab=\'kinks\';renderField();document.querySelectorAll(\'#fieldpills .pill\').forEach(function(p){p.classList.remove(\'on\');});var fp=document.querySelector(\'[data-fp=kinks]\');if(fp)fp.classList.add(\'on\')">Browse Kink Library →</button></div>';
+  h += '</div>';
+
+  el('profbody').innerHTML = h;
+
+  // Bind archetype click
+  el('profbody').querySelectorAll('.archcard').forEach(function(card) {
+    card.addEventListener('click', function() {
+      STATE.arch = this.dataset.arch;
+      save();
+      renderProfile();
+      toast('Archetype updated');
+    });
+  });
+
+  // Bind background selection
+  el('profbody').querySelectorAll('[data-mybgid]').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      el('profbody').querySelectorAll('[data-mybgid]').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');
+      STATE.myBackground = this.dataset.mybgid;
+      save();
+      toast('Background updated');
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SKILLS
+// ═══════════════════════════════════════════════════════════════
+function renderSkills() {
+  var lv = getLevel(STATE.xp);
+  var phase = getPhase(lv);
+  var filter = STATE.skillFilter || 'all';
+
+  // Phase note
+  var phaseColor = phase===1?'var(--phase1)':phase===2?'var(--phase2)':'var(--phase3)';
+  var phaseNote = phase===1
+    ? 'Phase I unlocks: Presence, Eye Contact, Frame Holding, Escalation, Stamina. Foundation before technique.'
+    : phase===2
+    ? 'Phase II unlocks: All technical skills. Technique, control, kink negotiation, partner reading.'
+    : 'Phase III: Mastery-tier skills available. Edge Lord, advanced breath, fantasy architecture.';
+  el('skillphase').innerHTML = '<div style="padding:10px 13px;border:1px solid ' + phaseColor + '44;border-radius:6px;font-size:12px;color:var(--dim)"><span style="color:' + phaseColor + ';font-family:\'Space Mono\',monospace;font-size:10px">PHASE ' + phase + ' · </span>' + phaseNote + '</div>';
+
+  var skills = filter === 'all' ? SKILLS : SKILLS.filter(function(s){ return s.cls === filter; });
+  var grouped = {};
+  skills.forEach(function(s) { if(!grouped[s.cls]) grouped[s.cls]=[]; grouped[s.cls].push(s); });
+
+  var h = '';
+  Object.keys(grouped).forEach(function(cls) {
+    var cm = CLASS_META[cls];
+    h += '<div class="classcard" style="border-color:' + cm.color + '44">' +
+      '<div class="classhdr" data-cls="' + cls + '" style="background:' + cm.color + '0a">' +
+      '<div><div style="font-size:15px;font-weight:700;color:' + cm.color + '">' + cm.icon + ' ' + sanitize(cm.name) + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:2px">' + sanitize(cm.desc) + '</div></div>' +
+      '<div style="color:var(--muted);font-size:20px">›</div></div>' +
+      '<div class="classbody" id="cls-' + cls + '">';
+    grouped[cls].forEach(function(skill) {
+      var rank = STATE.skills[skill.id]||0;
+      var locked = phase < skill.phase;
+      var rankLabel = rank===0?'Unranked':['Novice','Developing','Competent','Solid','Skilled','Elite','Master','Legendary'][rank-1]||'Ranked '+rank;
+      var rankColor = rank===0?'var(--muted)':rank<3?'var(--teal)':rank<6?'var(--gold)':rank<8?'var(--rose)':'var(--violet)';
+      var cost = skillRankCost(rank);
+      var canUp = !locked && rank < skill.maxRank;
+      h += '<div style="padding:14px 0;border-top:1px solid var(--b1)">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
+        '<div><div style="font-size:14px;font-weight:700;color:' + (locked?'var(--muted)':rank>0?cm.color:'var(--text)') + '">' + (rank>0?'✦ ':'') + sanitize(skill.name) + '</div>' +
+        '<div style="display:flex;gap:4px;margin-top:4px">' +
+        pill(locked?'Phase '+skill.phase+' locked':rankLabel, rankColor) +
+        pill(cm.name.replace('The ',''), cm.color) + '</div></div>' +
+        '<div style="text-align:right;flex-shrink:0;margin-left:8px">' +
+        '<div style="display:flex;gap:2px;margin-bottom:3px">' +
+        Array.from({length:skill.maxRank}).map(function(_,i){ return '<div style="width:12px;height:4px;border-radius:1px;background:' + (i<rank?cm.color:'var(--s3)') + '"></div>'; }).join('') +
+        '</div>' +
+        '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted)">' + rank + '/' + skill.maxRank + '</div></div></div>' +
+        '<div class="cbody" style="margin-bottom:8px">' + sanitize(skill.desc) + '</div>' +
+        '<div style="background:var(--s3);border-left:2px solid ' + (rank>0?cm.color:'var(--b2)') + ';padding:9px 11px;border-radius:0 4px 4px 0;margin-bottom:8px">' +
+        '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted);margin-bottom:3px">HOW TO BUILD THIS</div>' +
+        '<div style="font-size:12px;color:var(--muted);line-height:1.7">' + sanitize(skill.how) + '</div></div>' +
+        '<div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;padding:8px 10px;background:var(--s3);border-radius:4px">' +
+        '<span style="color:var(--gold);font-family:\'Space Mono\',monospace;font-size:9px">EVIDENCE · </span>' + sanitize(skill.evidence) + '</div>' +
+        (locked
+          ? '<div style="font-size:11px;font-family:\'Space Mono\',monospace;color:var(--muted);text-align:center;padding:8px">Unlocks in Phase ' + skill.phase + ' (Level ' + (skill.phase===2?20:60) + '+)</div>'
+          : rank < skill.maxRank
+          ? '<button class="btn sm" data-skillid="' + skill.id + '" data-cost="' + cost + '" style="border-color:' + cm.color + ';color:' + cm.color + '">' +
+            (rank===0?'Begin Training':'Advance Rank → ' + (['Novice','Developing','Competent','Solid','Skilled','Elite','Master','Legendary'][rank]||'Next')) +
+            ' · Log ' + cost/10 + ' relevant sessions to unlock</button>'
+          : '<div style="text-align:center;font-size:11px;font-family:\'Space Mono\',monospace;color:var(--violet)">★ MAX RANK — LEGENDARY</div>') +
+        '</div>';
+    });
+    h += '</div></div>';
+  });
+
+  el('skilllist').innerHTML = h;
+
+  // Class toggle
+  el('skilllist').querySelectorAll('.classhdr').forEach(function(hdr) {
+    hdr.addEventListener('click', function() {
+      var cls = this.dataset.cls;
+      var body = el('cls-' + cls);
+      body.classList.toggle('on');
+    });
+  });
+
+  // Skill advance (log-based gating)
+  el('skilllist').querySelectorAll('[data-skillid]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.dataset.skillid;
+      var cost = parseInt(this.dataset.cost);
+      var skill = SKILLS.find(function(s){return s.id===id;});
+      var lv2 = getLevel(STATE.xp);
+      if (phase < (skill?skill.phase:1)) { toast('Unlock Phase ' + skill.phase + ' first'); return; }
+      // Check if enough relevant logs
+      var relevantLogs = STATE.logs.filter(function(l){
+        return ['session','oralgive','partnerorg','kegel','gym','drill','aftercare','kinkintro','postreview'].includes(l.type);
+      }).length;
+      var curRank = STATE.skills[id]||0;
+      var required = curRank===0?3:curRank*5;
+      if (relevantLogs < required) {
+        toast('Need ' + required + ' practice logs to advance this skill');
+        return;
+      }
+      STATE.skills[id] = (STATE.skills[id]||0) + 1;
+      var newRank = STATE.skills[id];
+      var bonus = newRank * 50;
+      addXP(bonus, '✦ ' + sanitize(skill?skill.name:id) + ' → Rank ' + newRank);
+      save();
+      renderSkills();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  LOG
+// ═══════════════════════════════════════════════════════════════
+function buildLogSelect() {
+  var sel = el('logtype');
+  var grouped = {};
+  LOG_TYPES.forEach(function(t){ if(!grouped[t.cat]) grouped[t.cat]=[]; grouped[t.cat].push(t); });
+  var h = '';
+  Object.keys(grouped).forEach(function(cat) {
+    h += '<optgroup label="' + sanitize(cat) + '">';
+    grouped[cat].forEach(function(t) { h += '<option value="' + t.id + '">' + sanitize(t.name) + ' (+' + t.baseXP + 'XP base)</option>'; });
+    h += '</optgroup>';
+  });
+  sel.innerHTML = h;
+}
+
+function updateLogXPPreview() {
+  var type = el('logtype').value;
+  var qual = parseInt(el('logqual').value);
+  var lt = LOG_TYPES.find(function(t){return t.id===type;});
+  if (!lt) return;
+  var qualMult = [0.6, 0.8, 1.0, 1.3, 1.6][qual-1];
+  var noteBonus = el('lognote').value.length > 80 ? 40 : el('lognote').value.length > 20 ? 20 : 0;
+  var total = Math.round(lt.baseXP * qualMult) + noteBonus;
+  el('logxppreview').textContent = '+' + total + ' XP (base ' + lt.baseXP + ' × ' + qualMult + ' quality' + (noteBonus?' + ' + noteBonus + ' reflection bonus':'') + ')';
+}
+
+function submitLog() {
+  var type = el('logtype').value;
+  var ctx = el('logctx').value;
+  var qual = parseInt(el('logqual').value)||3;
+  var note = el('lognote').value.slice(0, 1000).trim();
+  var lt = LOG_TYPES.find(function(t){return t.id===type;});
+  var qualMult = [0.6, 0.8, 1.0, 1.3, 1.6][qual-1]||1;
+  var noteBonus = note.length > 80 ? 40 : note.length > 20 ? 20 : 0;
+  var xp = Math.round((lt?lt.baseXP:30) * qualMult) + noteBonus;
+  var entry = {
+    type:type, cat:lt?lt.cat:'Other', ctx:ctx,
+    note:note, qual:qual, xp:xp,
+    date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'})
+  };
+  STATE.logs.unshift(entry);
+  // Check quest completion
+  var quests = QUESTS.filter(function(q){ return isQuestComplete(q) && STATE.logs.filter(function(l){return l.type===q.logType;}).length === q.required; });
+  quests.forEach(function(q){ addXP(q.xpReward, '★ Quest complete: ' + q.name); });
+  addXP(xp, '+' + xp + ' XP — ' + sanitize(lt?lt.name:type));
+  el('lognote').value = '';
+  el('logqual').value = '3';
+  el('logquallbl').textContent = '3★';
+  save();
+  renderLogList();
+  updateLogStats();
+  renderHome();
+}
+
+function renderLogList() {
+  var filter = STATE.logFilter || 'all';
+  var filtered = STATE.logs.filter(function(l){ return filter==='all'||l.cat===filter; });
+  if (filtered.length === 0) {
+    el('loglist').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-style:italic">Nothing in this category yet.</div>';
+    return;
+  }
+  el('loglist').innerHTML = filtered.map(function(l) {
+    var lt = LOG_TYPES.find(function(t){return t.id===l.type;});
+    var cc = CAT_COLORS[l.cat]||'var(--muted)';
+    var stars = starRating(l.qual||3, 5, cc);
+    return '<div class="logitem">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">' +
+      '<div style="flex:1;min-width:0"><div style="font-size:14px;color:var(--text);font-weight:600">' + sanitize(lt?lt.name:l.type) + '</div>' +
+      '<div style="display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap">' +
+      '<span class="tag" style="border-color:' + cc + '55;color:' + cc + '">' + sanitize(l.cat||'Other') + '</span>' +
+      (l.ctx&&l.ctx!=='N/A'?'<span style="font-size:11px;color:var(--muted)">' + sanitize(l.ctx) + '</span>':'') +
+      stars + '</div></div>' +
+      '<div style="text-align:right;flex-shrink:0;margin-left:10px">' +
+      '<div style="font-family:\'Space Mono\',monospace;font-size:14px;font-weight:700;color:var(--gold)">+' + l.xp + '</div>' +
+      '<div style="font-size:10px;color:var(--muted)">' + sanitize(l.date) + '</div></div></div>' +
+      (l.note?'<div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.7;border-left:2px solid var(--b2);padding-left:9px;margin-top:6px">' + sanitize(l.note) + '</div>':'') +
+      '</div>';
+  }).join('');
+}
+
+function updateLogStats() {
+  var total = STATE.logs.length;
+  var totalXp = STATE.logs.reduce(function(a,l){return a+l.xp;},0);
+  el('logstats').innerHTML =
+    '<div style="font-family:\'Space Mono\',monospace;font-size:11px;color:var(--teal)">' + total + ' entries</div>' +
+    '<div style="font-family:\'Space Mono\',monospace;font-size:11px;color:var(--gold)">' + totalXp + ' XP earned</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FIELD & LIBRARY
+// ═══════════════════════════════════════════════════════════════
+var ESC_LADDER = [
+  {l:'Eye Contact',      c:'#22d4b8', sig:'Returns gaze, holds 1+ seconds',          move:'Hold gaze 70% of interaction. Re-engage after she looks away first.'},
+  {l:'Approach',         c:'#30b0d0', sig:'Body doesn\'t turn away, no closure signal',move:'Close distance with intent. Purpose in movement. Angle approach, not direct frontal.'},
+  {l:'Opener',           c:'#4090f0', sig:'More than one word back, body faces you',   move:'Situational — something real in the environment right now. Not rehearsed.'},
+  {l:'First Touch',      c:'#c07020', sig:'No flinch, tense, or distancing response', move:'Contextual. Guiding through crowd, touching arm to emphasize a point.'},
+  {l:'Extended Convo',   c:'#f08030', sig:'She asks questions back, introduces topics',move:'She\'s investing. Ask questions requiring opinion, not factual answers.'},
+  {l:'Number / Next',    c:'#e05080', sig:'Positive sentiment, engaged 15+ minutes',  move:'"Let\'s continue this — what\'s your WhatsApp?" Offer your phone.'},
+  {l:'Hand / Waist',     c:'#e8357a', sig:'She moves into touch rather than away',    move:'Take her hand to move somewhere. Guide by the waist. Purposeful.'},
+  {l:'First Kiss',       c:'#c02050', sig:'Prolonged eye contact, proximity, lean',   move:'90% lean. Hold. Let her close the last 10%. She wants to feel she kissed you.'},
+];
+var SIGS = {
+  green:['Returns and holds eye contact','Initiates physical contact or touches you','Laughs genuinely at your material','Asks questions about your life','Mirrors your body language','Feet pointed toward you','Closes physical distance','Responds with substance quickly','Suggests extending the interaction'],
+  yellow:['Polite but not curious — short answers','Answers but never asks anything back','Eyes wandering while you talk','Maintains maximum social distance','Checks phone repeatedly','Laughter feels performative'],
+  red:['Hard redirect away — physical or conversational','Closed body language, looking for exits','Mentions partner directly','Monosyllabic to everything','Any verbal or non-verbal no'],
+};
+
+var FIELD_SECTIONS = {
+  approach: function() {
+    return '<div class="card accent" style="margin-bottom:14px"><div class="cbody" style="font-size:15px;font-style:italic;color:var(--cream)">"Outcome independence is the most attractive approach energy. You\'re sharing a moment — not auditing a result."</div></div>' +
+      '<div class="sec">OPENER HIERARCHY</div>' +
+      '<div class="card">' +
+      '<div class="cbody">' +
+      '<div style="margin-bottom:9px"><span style="color:var(--teal);font-weight:700">Situational (best)</span> — something real in the environment right now. Cannot be prepared. Easy when genuine. Impossible when fake.</div>' +
+      '<div style="margin-bottom:9px"><span style="color:var(--gold);font-weight:700">Opinion (good)</span> — ask her perspective on something you\'re actually curious about. She\'s the expert. Creates equality.</div>' +
+      '<div style="margin-bottom:9px"><span style="color:var(--rose);font-weight:700">Direct (calibrated)</span> — "I saw you and wanted to meet you." Requires composure. No pressure for her response.</div>' +
+      '<div><span style="color:var(--muted);font-weight:700">Scripted (avoid)</span> — rehearsed routines. The energy is detectable. Signals low social IQ.</div></div></div>' +
+      '<div class="sec">TEXTING</div>' +
+      '<div class="card"><div class="cbody">' +
+      '<div style="margin-bottom:8px"><strong style="color:var(--text)">Text to meet, not to connect.</strong> Connection happens in person. Move toward a meeting within 5–7 messages.</div>' +
+      '<div style="margin-bottom:8px"><strong style="color:var(--text)">Match then lead.</strong> Match her speed and length, then slowly pull back. She mirrors up.</div>' +
+      '<div style="margin-bottom:8px"><strong style="color:var(--text)">Assume the close.</strong> "When are you free this week?" — not "Would you want to hang out sometime?"</div>' +
+      '<div><strong style="color:var(--text)">Never double-text from anxiety.</strong> Double-texting with purpose (logistics, humor) is fine. Filling silence is not.</div></div></div>';
+  },
+  escalation: function() {
+    var h = '<div class="card accent" style="margin-bottom:14px"><div class="cbody">Each rung requires a positive signal. <strong style="color:var(--cream)">Green → proceed. Neutral → hold, retry once. Negative → back one rung.</strong></div></div>';
+    h += '<div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">';
+    ESC_LADDER.forEach(function(r,i) {
+      h += '<div class="rung"><div class="rungbar" style="background:' + r.c + '"></div>' +
+        '<div class="rungbody" style="' + (i===ESC_LADDER.length-1?'border-bottom:none':'') + '">' +
+        '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">' + (i+1) + '. ' + sanitize(r.l) + '</div>' +
+        '<div style="font-size:12px;color:var(--dim);font-style:italic;margin-bottom:3px">Signal: ' + sanitize(r.sig) + '</div>' +
+        '<div style="font-size:12px;color:var(--muted)">' + sanitize(r.move) + '</div></div></div>';
+    });
+    h += '</div>';
+    return h;
+  },
+  signals: function() {
+    function makeList(items, color, dot) {
+      return items.map(function(s) {
+        return '<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--b1);align-items:flex-start">' +
+          '<span style="color:' + color + ';flex-shrink:0;margin-top:2px">' + dot + '</span>' +
+          '<span class="cbody">' + sanitize(s) + '</span></div>';
+      }).join('');
+    }
+    return '<div class="sec" style="margin-top:0">GREEN — proceed</div>' +
+      '<div class="card">' + makeList(SIGS.green,'var(--green)','●') + '</div>' +
+      '<div class="sec">YELLOW — hold and read</div>' +
+      '<div class="card">' + makeList(SIGS.yellow,'var(--gold)','●') + '</div>' +
+      '<div class="sec">RED — back off, no exceptions</div>' +
+      '<div class="card">' + makeList(SIGS.red,'var(--wine)','●') + '</div>';
+  },
+  intimate: function() {
+    return [
+      {c:'var(--rose)',  t:'Clitoral Stimulation (Herbenick 2018, N=1,055)',    b:'70.4% of women require external clitoral stimulation to orgasm. The majority prefer circular motion. Consistent rhythm beats variation when approaching climax. Oral stimulation is the primary act — not a warmup.'},
+      {c:'var(--teal)',  t:'Ejaculatory Control (Waldinger 2005 + BJU 2014)',   b:'Behavioral training: Kegel Protocol 8 weeks daily + Edge Sessions 3×/week = significant IELT improvement within 8–12 weeks. The most documented male sexual training outcome in peer-reviewed literature.'},
+      {c:'var(--gold)',  t:'Sexual Communication (Mallory 2019, N=25,000)',     b:'Sexual communication is the #1 modifiable predictor of satisfaction. Partners who communicate explicitly report 38% higher satisfaction. Ask during. Ask after. Build her specific map.'},
+      {c:'var(--violet)',t:'Aftercare & Bonding (Ditzen 2009)',                 b:'The post-session oxytocin window determines bond strength more than anything inside the session. 20+ minutes of undivided presence. No phone. Water. Something true said aloud. This is where loyalty is built.'},
+      {c:'var(--amber)', t:'Physical Stamina (Gerbild 2018)',                   b:'40 min moderate cardio 4×/week produces 18% IIEF improvement — equivalent to mild pharmacological intervention. Physical capacity is built, not inherited. Kegels + cardio + edge training = the physical stack.'},
+      {c:'var(--cyan)',  t:'Responsive Desire (Nagoski 2015)',                  b:'Most women experience responsive desire — arousal that emerges in response to context and stimulation, not spontaneously. This means: remove her brakes (stress, self-consciousness, safety concerns) before adding accelerators. Context is the foreplay.'},
+    ].map(function(p) {
+      return '<div class="principle" style="border-color:' + p.c + ';margin-bottom:8px">' +
+        '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:' + p.c + ';margin-bottom:5px">' + sanitize(p.t) + '</div>' +
+        '<div class="cbody">' + sanitize(p.b) + '</div></div>';
+    }).join('');
+  },
+  library: function() {
+    var h = '<div class="cbody" style="margin-bottom:14px">Reading is studying, not acquiring. Mark a book read when you\'ve genuinely engaged with it. Skills marked as "studied" — not auto-acquired. Applying a concept in real life and logging it completes the loop.</div>';
+    BOOKS.forEach(function(b) {
+      var read = STATE.books[b.id];
+      var phaseColor = b.phase===1?'var(--phase1)':b.phase===2?'var(--phase2)':'var(--phase3)';
+      h += '<div class="card" style="border-color:' + (read?'var(--blue)':'var(--b1)') + ';background:' + (read?'#60a5fa08':'var(--s2)') + ';margin-bottom:10px">' +
+        '<div style="display:flex;gap:12px;align-items:flex-start">' +
+        '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:15px;font-weight:700;color:' + (read?'var(--blue)':'var(--text)') + ';margin-bottom:2px">' + (read?'✓ ':'') + sanitize(b.name) + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:6px">' + sanitize(b.author) + '</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">' +
+        pill('Phase '+b.phase, phaseColor) +
+        b.studiedSkills.map(function(sk){ var s=SKILLS.find(function(x){return x.id===sk;}); return s?pill(s.name,CLASS_META[s.cls].color):''; }).join('') + '</div>' +
+        '<div class="cbody" style="margin-bottom:8px">' + sanitize(b.desc) + '</div>' +
+        '<div style="background:var(--s3);border-radius:5px;padding:9px;margin-bottom:8px">' +
+        '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--gold);margin-bottom:4px">KEY SYNTHESIS</div>' +
+        '<div style="font-size:12px;color:var(--dim);line-height:1.7">' + sanitize(b.synthesis) + '</div></div>' +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">' +
+        '<span style="font-family:\'Space Mono\',monospace;font-size:12px;color:var(--gold)">+' + b.xp + ' XP</span>' +
+        Object.keys(b.stats).map(function(k){ var sc=STAT_CFG.find(function(s){return s.k===k;}); return '<span style="font-size:11px;color:'+(sc?sc.c:'var(--teal)')+'">'+k+' +'+b.stats[k]+'</span>'; }).join('') +
+        '</div></div>' +
+        '<button class="btn sm ' + (read?'muted':'fill') + '" data-book="' + b.id + '" style="flex-shrink:0;' + (read?'border-color:var(--muted);color:var(--muted);':'') + '"' + (read?' disabled':'') + '>' +
+        (read?'Read ✓':'Mark Read') + '</button></div></div>';
+    });
+    return h;
+  },
+  kinks: function() { return renderKinkLibrary('kinks'); },
+  fetishes: function() { return renderKinkLibrary('fetishes'); },
+  fantasies: function() { return renderKinkLibrary('fantasies'); }
+};
+
+function renderField() {
+  var tab = STATE.fieldTab || 'approach';
+  var fn = FIELD_SECTIONS[tab];
+  el('fieldcontent').innerHTML = fn ? fn() : '';
+  // Bind book buttons
+  el('fieldcontent').querySelectorAll('[data-book]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (this.disabled) return;
+      var id = this.dataset.book;
+      var b = BOOKS.find(function(x){return x.id===id;});
+      if (b && !STATE.books[id]) {
+        STATE.books[id] = true;
+        addXP(b.xp, '📖 ' + sanitize(b.name));
+        Object.keys(b.stats).forEach(function(k){ if(STATE.stats[k]!==undefined) STATE.stats[k]=Math.min(100,STATE.stats[k]+b.stats[k]); });
+        save();
+        renderField();
+      }
+    });
+  });
+  // Bind kink "mine" toggle buttons
+  el('fieldcontent').querySelectorAll('[data-klid]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var kid = this.dataset.klid;
+      var ktype = this.dataset.ktype;
+      if (!ktype || !STATE[ktype]) return;
+      var arr = STATE[ktype];
+      var pos = arr.indexOf(kid);
+      if (pos > -1) { arr.splice(pos,1); toast('Removed from your preferences'); }
+      else { arr.push(kid); toast('Added to your preferences'); }
+      save();
+      renderField();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  XP / TOAST
+// ═══════════════════════════════════════════════════════════════
+var _toastTimer;
+function toast(msg) {
+  var t = el('toast');
+  t.textContent = String(msg).slice(0,80);
+  t.classList.add('on');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+
+function addXP(amount, msg) {
+  var oldLv = getLevel(STATE.xp);
+  STATE.xp += Math.max(0, Math.floor(amount));
+  var newLv = getLevel(STATE.xp);
+  save();
+  if (msg) toast(msg);
+  if (newLv > oldLv) {
+    setTimeout(function(){ toast('★ LEVEL UP — Lv.' + newLv + ': ' + getRank(newLv)); }, 1700);
+  }
+  if (document.getElementById('pg-home').classList.contains('on')) renderHome();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function goPage(id) {
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.nb').forEach(function(b){ b.classList.remove('on'); });
+  var pg = el('pg-'+id), nb = el('nb-'+id);
+  if(pg) pg.classList.add('on');
+  if(nb) nb.classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='home') renderHome();
+  if(id==='profile') renderProfile();
+  if(id==='skills') renderSkills();
+  if(id==='log'){ renderLogList(); updateLogStats(); }
+  if(id==='field') renderField();
+  if(id==='partners') renderPartners();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BIND EVENTS
+// ═══════════════════════════════════════════════════════════════
+function bindEvents() {
+  // Nav
+  document.querySelectorAll('.nb').forEach(function(b){
+    b.addEventListener('click', function(){ goPage(this.dataset.pg); });
+  });
+  // Field pills
+  document.querySelectorAll('#fieldpills .pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      document.querySelectorAll('#fieldpills .pill').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');
+      STATE.fieldTab = this.dataset.fp;
+      renderField();
+    });
+  });
+  // Log filter pills
+  document.querySelectorAll('#logpills .pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      document.querySelectorAll('#logpills .pill').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');
+      STATE.logFilter = this.dataset.lf;
+      renderLogList();
+    });
+  });
+  // Skill filter pills
+  document.querySelectorAll('#skillpills .pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      document.querySelectorAll('#skillpills .pill').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');
+      STATE.skillFilter = this.dataset.sf;
+      renderSkills();
+    });
+  });
+  // Log quality
+  el('logqual').addEventListener('input', function(){
+    el('logquallbl').textContent = this.value + '★';
+    updateLogXPPreview();
+  });
+  el('logtype').addEventListener('change', updateLogXPPreview);
+  el('lognote').addEventListener('input', updateLogXPPreview);
+  // Log submit
+  el('logsubmit').addEventListener('click', submitLog);
+  // Modal close
+  el('mclose').addEventListener('click', function(){ el('moverlay').classList.remove('on'); });
+  el('moverlay').addEventListener('click', function(e){ if(e.target===this) el('moverlay').classList.remove('on'); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — KINKS, FETISHES, FANTASIES (for Library + Partner system)
+// ═══════════════════════════════════════════════════════════════
+// heat: B=accessible, A=trust-gated, S=infrastructure needed, SS=expert only
+// danger: 1=negligible → 5=high (expertise required)
+// acceptance: 1=rare/taboo → 5=mainstream
+// culturalCat: maps to taboo matrix categories
+// Sources: Richters et al. (2008), Holvoet et al. (2017), Joyal & Carpentier (2017)
+var KINKS = [
+  {id:'praise',     name:'Praise Kink',         heat:'B',danger:1,acceptance:5,culturalCat:'explicit',
+   desc:'Verbal affirmation during intimacy — "Good girl," specific compliments, narration of what you appreciate. Activates nucleus accumbens (reward pathway). Universally compatible.',
+   intro:'Watch her reaction to your first genuine specific praise. If she softens or leans in — this is a pathway.',
+   safety:'None required. Adjust intensity to her response.'},
+  {id:'orgasm_ctrl',name:'Orgasm Control / Edging',heat:'A',danger:2,acceptance:4,culturalCat:'power',
+   desc:'Holding partner at the edge of orgasm repeatedly. Documented climax intensity multiplier 1.5–3× (Masters & Johnson). Requires precise body reading and existing trust.',
+   intro:'Begin by simply slowing when she is close. Full denial only after she explicitly welcomes extended teasing.',
+   safety:'Monitor emotional state. Some find prolonged denial frustrating — check in verbally.'},
+  {id:'body_worship',name:'Body Worship',         heat:'B',danger:1,acceptance:4,culturalCat:'explicit',
+   desc:'Extended reverent attention to partner\'s body as an object of devotion — not instrument. Kisses, affirmation, attention to overlooked zones. Deeply bonding.',
+   intro:'20 minutes minimum. Start at feet or hands. Work upward. Speak what you genuinely appreciate about each part.',
+   safety:'None required.'},
+  {id:'blindfold',  name:'Sensory Deprivation',  heat:'B',danger:1,acceptance:4,culturalCat:'power',
+   desc:'Blindfold or earplugs. Removes visual processing and heightens all other senses ~20–30%. Excellent entry point into power dynamics.',
+   intro:'Start with blindfold only. Let her adjust. Sound, temperature, and touch become overwhelming.',
+   safety:'Ensure she can remove the blindfold herself. Verbal check-ins throughout.'},
+  {id:'ds',         name:'Dom / Sub Dynamic',    heat:'A',danger:2,acceptance:3,culturalCat:'power',
+   desc:'Structured roles within a session. Dom sets all parameters. Sub surrenders agency. Both actively choose — this distinction separates it from real control. Trust threshold: 60+.',
+   intro:'Negotiate explicitly: what is in/out of bounds. Safeword agreed before starting.',
+   safety:'Safeword mandatory. Debrief within 24h after first D/s session. Watch for sub-drop.'},
+  {id:'roleplay',   name:'Roleplay / Scenario',  heat:'A',danger:1,acceptance:3,culturalCat:'taboo',
+   desc:'Assuming roles (stranger, authority, character) to create psychological distance from daily identity. Distance enables arousal states otherwise inaccessible.',
+   intro:'Start low-commitment: strangers meeting at a bar. Agree on how to break character if needed.',
+   safety:'Agree on scenario and break character signal explicitly.'},
+  {id:'impact',     name:'Impact Play (Spanking)',heat:'A',danger:2,acceptance:3,culturalCat:'power',
+   desc:'Rhythmic impact to gluteal nerve cluster, adjacent to pelvic floor. Indirect arousal stimulation. Endorphin and adrenaline response documented.',
+   intro:'Start with hand. Alternate between impact and caress. Never hit spine or kidneys.',
+   safety:'Avoid tailbone, spine, kidneys. Check in on intensity regularly.'},
+  {id:'restraint',  name:'Light Restraint',      heat:'A',danger:2,acceptance:3,culturalCat:'power',
+   desc:'Physical restraint via silk ties or cuffs. Removes agency → endorphin response. Safety-within-helplessness creates the deepest surrender for many partners.',
+   intro:'Start with wrists loosely. Quick-release always available. Circulation check every 10 minutes.',
+   safety:'Quick-release mandatory. Circulation check every 10 min. Never leave partner alone when restrained.'},
+  {id:'temperature',name:'Temperature Play',     heat:'A',danger:2,acceptance:3,culturalCat:'kink',
+   desc:'Ice followed by heat, or alternating. TRPM8 (cold) and TRPV1 (heat) receptor activation alongside arousal pathways creates compound sensation. Ice cube and candle wax.',
+   intro:'Ice cube from freezer — drag slowly. Wax temperature tested on wrist first. Contrast is the key.',
+   safety:'Test wax temperature first. Never near eyes. Keep ice moving to prevent burn.'},
+  {id:'marking',    name:'Marking / Claiming',   heat:'A',danger:2,acceptance:3,culturalCat:'explicit',
+   desc:'Biting, hickeys, scratches — physical signs of possession. Primal possessive signal. Deep endorphin response. Requires consent on location and intensity.',
+   intro:'Ask where she is comfortable being marked. Start light. Check in after.',
+   safety:'No breaking skin without explicit consent. Visible marking: agree on locations in advance.'},
+  {id:'degradation',name:'Consensual Degradation',heat:'S',danger:3,acceptance:2,culturalCat:'power',
+   desc:'Consensual verbal humiliation within explicitly negotiated parameters. Psychologically complex. Some find it profoundly liberating — others find it damaging. Trust threshold: 80+.',
+   intro:'Negotiate specific words and phrases in advance — not in the moment. Extensive debrief required.',
+   safety:'Clear parameters on acceptable language. Sub-drop risk highest here. Thorough debrief mandatory.'},
+  {id:'cnc',        name:'CNC (Consensual Non-Consent)',heat:'SS',danger:4,acceptance:1,culturalCat:'taboo',
+   desc:'Pre-negotiated scenario involving a "no" that is pre-agreed as part of the scene. Highest negotiation standard required. Written scene contract, two safewords, debrief mandatory.',
+   intro:'Requires Bond Level 6+ and Trust 80+. Months or years of relational infrastructure before attempting.',
+   safety:'Written scene contract. Two safewords. Full debrief within 24h. Not appropriate for early-stage dynamics.'},
+];
+
+var FETISHES = [
+  {id:'feet',       name:'Foot Worship',         heat:'A',danger:1,acceptance:3,culturalCat:'explicit',
+   desc:'Most prevalent fetish globally. Scorolli et al. (2007): ~47% of all specific fetishes involve feet/footwear. Neurological basis: Ramachandran\'s cortical adjacency — foot and genital areas neighbor each other in the somatosensory cortex.',
+   intro:'Introduce through foot massage. Completely non-threatening entry point. Progress from there.',
+   safety:'None required.'},
+  {id:'lingerie',   name:'Lingerie / Fabrics',   heat:'B',danger:1,acceptance:5,culturalCat:'explicit',
+   desc:'Arousal from specific fabrics or garments. Lace, stockings, silk, satin. Conditioning-based — associated through repeated pairing with arousal states.',
+   intro:'Express appreciation specifically. "You in stockings is one of the most attractive things I can imagine."',
+   safety:'None required.'},
+  {id:'leather',    name:'Leather / Latex / Uniform',heat:'A',danger:1,acceptance:3,culturalCat:'kink',
+   desc:'Tactile and visual fetish for specific materials or uniforms. Often paired with power dynamics. The material itself becomes a psychological signal.',
+   intro:'Express the interest directly. "Leather on you does something to me." Gauge the response.',
+   safety:'Latex: check for latex allergy before use.'},
+  {id:'hair',       name:'Hair / Hair Pulling',  heat:'A',danger:2,acceptance:4,culturalCat:'explicit',
+   desc:'Attraction to specific hair qualities or hair-pulling. Hair pulling activates pain/pleasure pathways and primal possession signals. Very common across demographics.',
+   intro:'"Do you like your hair pulled?" — direct, simple. Start gentle and read the response.',
+   safety:'Pull from root, not tips. Distribute force. No jerking motions.'},
+  {id:'voice',      name:'Voice / Accent',       heat:'B',danger:1,acceptance:4,culturalCat:'explicit',
+   desc:'Strong arousal response to voice quality, pitch, cadence, or accent. Neurological: voice activates face-processing regions (Belin 2000). Accent adds novelty and cultural signal.',
+   intro:'Operates naturally. Voice control is a trainable skill in the Architect class.',
+   safety:'None required.'},
+  {id:'scent',      name:'Natural Scent',        heat:'B',danger:1,acceptance:4,culturalCat:'explicit',
+   desc:'Arousal from natural body scent. Androstadienone detection documented. Genetic MHC compatibility affects scent attraction — the person whose scent is most compelling may indicate biological compatibility.',
+   intro:'Operates naturally.',
+   safety:'None required.'},
+  {id:'size_diff',  name:'Size Difference',      heat:'B',danger:1,acceptance:3,culturalCat:'explicit',
+   desc:'Attraction to significant height or build differences. Power differential signal. Common across genders — often drives physical type preferences more than explicit fetish.',
+   intro:'Express appreciation for the contrast genuinely.',
+   safety:'None required.'},
+  {id:'tattoos',    name:'Tattoos / Piercings',  heat:'B',danger:1,acceptance:4,culturalCat:'explicit',
+   desc:'Strong attraction to tattooed or pierced bodies. Signal of non-conformity, pain tolerance, and self-ownership.',
+   intro:'Operates naturally. Express specific appreciation.',
+   safety:'None required.'},
+];
+
+var FANTASIES = [
+  {id:'control_total',name:'Total Control / Complete Surrender',heat:'S',danger:2,acceptance:2,culturalCat:'power',
+   desc:'Fantasy of complete transfer of agency — either giving or receiving. The deepest expression of the Dom/Sub spectrum. Trust threshold: 80+. Bond Level 5+ minimum.',
+   intro:'Approach through D/s dynamic first. Build the foundation before going deeper.',
+   safety:'Detailed scene negotiation. Multiple safewords. Aftercare mandatory.'},
+  {id:'stranger',   name:'Stranger / Anonymous',  heat:'A',danger:1,acceptance:4,culturalCat:'taboo',
+   desc:'Fantasy of anonymous or near-anonymous encounter. Extremely common. Psychologically: novelty, reduced social complexity, primal signal. Best enacted through roleplay rather than literally.',
+   intro:'"Let\'s pretend we\'re meeting for the first time." The psychological distance does real work.',
+   safety:'If literally acting out: full STI protection, public-first meeting.'},
+  {id:'authority',  name:'Authority Figure',     heat:'A',danger:1,acceptance:3,culturalCat:'power',
+   desc:'Doctor, teacher, boss, officer scenarios. Power differential creates a psychological permission structure — the authority "makes" it happen. Widely documented across demographics.',
+   intro:'"I want to be your professor today." Simple, direct, clear.',
+   safety:'Establish how to step out of role at any point.'},
+  {id:'exhibition', name:'Exhibitionism',        heat:'A',danger:2,acceptance:3,culturalCat:'explicit',
+   desc:'Arousal from being watched or the risk of observation. Adrenaline amplifies arousal response. Spectrum from mirror play to semi-public scenarios.',
+   intro:'Mirror sex is the safest entry. "I want to watch us." Progress from there.',
+   safety:'Semi-public: ensure no actual third parties observe without their consent — legally and ethically non-negotiable.'},
+  {id:'forbidden',  name:'Forbidden / Taboo',    heat:'A',danger:1,acceptance:3,culturalCat:'taboo',
+   desc:'The arousal of the forbidden itself. Scenarios carrying social prohibition. The taboo is the stimulus regardless of specific content. Explore via Desire Journal first.',
+   intro:'Write about it before discussing it. What specifically is the compelling element?',
+   safety:'Distinguish between fantasy arousal and desire for reality.'},
+  {id:'threesome',  name:'Threesome / Group',    heat:'S',danger:2,acceptance:3,culturalCat:'group',
+   desc:'Most commonly reported sexual fantasy (Lehmiller 2018: #1 in US survey). Reality is significantly more complex than fantasy — jealousy, logistics, and emotional management are the actual challenges.',
+   intro:'Introduce as a fantasy first. "Does that ever cross your mind?" — long before any planning.',
+   safety:'All parties fully enthusiastic. Discuss jealousy protocols before. Plan for the emotional aftermath.'},
+  {id:'domination', name:'Domination / Being Dominated',heat:'A',danger:2,acceptance:3,culturalCat:'power',
+   desc:'Fantasy of either giving or receiving complete sexual domination. One of the most common power fantasies across genders (Bivona & Critelli 2009).',
+   intro:'Introduce through the D/s framework. Build trust infrastructure first.',
+   safety:'Negotiate explicitly before. Safeword. Debrief.'},
+  {id:'voyeur',     name:'Watching / Being Watched (Known Partner)',heat:'A',danger:1,acceptance:3,culturalCat:'explicit',
+   desc:'Mutual observation within a relationship. Different from exhibitionism — the arousal comes from the specific known person watching rather than anonymous observation.',
+   intro:'"I want to watch you touch yourself." Direct. Simply stated.',
+   safety:'Recording: explicit consent required every single time.'},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — CULTURAL BACKGROUNDS + TABOO MATRIX
+// ═══════════════════════════════════════════════════════════════
+// Taboo index per category: 0=no taboo, 10=strong taboo
+// Based on: Richters (2008), Wiederman (2005), Kinsey cross-cultural data
+// IMPORTANT: These are broad generalizations. Individual variation within any group
+// is always significant. Use as a starting-point signal, not a verdict.
+var CULTURAL_BG = [
+  {id:'western',      name:'Western Secular',          taboo:{explicit:1,power:2,kink:2,group:4,taboo:3}},
+  {id:'nordic',       name:'Nordic / Scandinavian',    taboo:{explicit:0,power:1,kink:2,group:3,taboo:2}},
+  {id:'mediterranean',name:'Mediterranean',             taboo:{explicit:2,power:3,kink:4,group:6,taboo:4}},
+  {id:'east_asian',   name:'East Asian',               taboo:{explicit:3,power:3,kink:5,group:7,taboo:4}},
+  {id:'latin',        name:'Latin American',           taboo:{explicit:2,power:3,kink:5,group:7,taboo:5}},
+  {id:'cons_christian',name:'Conservative Christian',  taboo:{explicit:5,power:4,kink:6,group:8,taboo:6}},
+  {id:'muslim',       name:'Muslim',                   taboo:{explicit:6,power:4,kink:6,group:9,taboo:6}},
+  {id:'hindu',        name:'Hindu',                    taboo:{explicit:3,power:3,kink:4,group:7,taboo:4}},
+  {id:'african_trad', name:'African Traditional',      taboo:{explicit:5,power:3,kink:6,group:8,taboo:6}},
+  {id:'orthodox_jew', name:'Jewish (Orthodox)',         taboo:{explicit:4,power:3,kink:5,group:9,taboo:5}},
+];
+
+var BOND_LABELS = ['Stranger','Caught Her Eye','Linked Up','Situationship','FWB','Consistent','Main','Ride or Die'];
+var ENERGY_LABELS = ['Receptive','Assertive','Playful','Selective','Devoted','Wild','Balanced'];
+
+// ═══════════════════════════════════════════════════════════════
+//  COMPATIBILITY ENGINE
+// ═══════════════════════════════════════════════════════════════
+function calcCompat(partner) {
+  var myBg = CULTURAL_BG.find(function(b){return b.id===STATE.myBackground;});
+  var herBg = CULTURAL_BG.find(function(b){return b.id===partner.background;});
+  var allKinkData = KINKS.concat(FETISHES).concat(FANTASIES);
+
+  // 1. Kink overlap score (0-100)
+  var myAll = STATE.myKinks.concat(STATE.myFetishes).concat(STATE.myFantasies);
+  var herAll = partner.theirKinks.concat(partner.theirFetishes).concat(partner.theirFantasies);
+  var shared = myAll.filter(function(k){return herAll.indexOf(k)>-1;});
+  var union  = myAll.concat(herAll.filter(function(k){return myAll.indexOf(k)===-1;}));
+  var kinkScore = union.length === 0 ? 60 : Math.round((shared.length/Math.max(union.length,1))*100);
+
+  // 2. Cultural compatibility (0-100)
+  // Penalty: shared kinks with high taboo in EITHER background get penalized
+  var penalty = 0;
+  shared.forEach(function(kId) {
+    var kink = allKinkData.find(function(k){return k.id===kId;});
+    if (!kink) return;
+    var cat = kink.culturalCat;
+    var myT  = myBg  ? (myBg.taboo[cat]  || 0) : 0;
+    var herT = herBg ? (herBg.taboo[cat] || 0) : 0;
+    penalty += Math.max(myT, herT);
+  });
+  var maxPenalty = shared.length * 9;
+  var cultScore = maxPenalty === 0 ? 75 : Math.max(0, Math.round(100 - (penalty/maxPenalty)*100));
+
+  // 3. Background harmony (are they from similar taboo frameworks?)
+  var bgHarmony = 75;
+  if (myBg && herBg) {
+    var cats = ['explicit','power','kink','group','taboo'];
+    var diff = 0;
+    cats.forEach(function(c){diff += Math.abs((myBg.taboo[c]||0)-(herBg.taboo[c]||0));});
+    bgHarmony = Math.round(100 - Math.min(diff/cats.length, 10)*9);
+  }
+
+  // 4. Weighted final
+  var final = Math.round(kinkScore*0.45 + cultScore*0.30 + bgHarmony*0.25);
+  return {
+    final: Math.min(100, Math.max(0, final)),
+    kinkScore: kinkScore,
+    cultScore: cultScore,
+    bgHarmony: bgHarmony,
+    shared: shared,
+    sharedCount: shared.length,
+    yourCount: myAll.length,
+    theirCount: herAll.length
+  };
+}
+
+function compatColor(score) {
+  return score>=75?'var(--teal)':score>=55?'var(--gold)':score>=35?'var(--amber)':'var(--wine)';
+}
+
+function compatLabel(score) {
+  return score>=80?'Excellent':score>=65?'Strong':score>=50?'Good':score>=35?'Friction Points':'Misaligned';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PARTNERS — RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderPartners() {
+  // Warn if profile not set
+  if (!STATE.questDone) {
+    el('partners-warn').style.display = '';
+    el('partners-warn').innerHTML = '<div class="card accent" style="margin-bottom:14px"><div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--pink);margin-bottom:6px">PROFILE REQUIRED</div><p class="cbody" style="margin-bottom:10px">Complete your Profile questionnaire first. The compatibility engine reads from your archetype, stats, and preferences.</p><button class="btn fill sm" onclick="goPage(\'profile\')">Go to Profile →</button></div>';
+  } else {
+    el('partners-warn').style.display = 'none';
+  }
+
+  // My preferences summary
+  var myAll = STATE.myKinks.concat(STATE.myFetishes).concat(STATE.myFantasies);
+  var myBg = CULTURAL_BG.find(function(b){return b.id===STATE.myBackground;});
+  el('partners-myprefs').innerHTML = '<div class="card" style="border-color:var(--pink)33;background:var(--pink)08;margin-bottom:10px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+    '<span style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--pink);letter-spacing:.12em">YOUR PREFERENCES (from Profile)</span>' +
+    '<button class="btn sm muted" onclick="goPage(\'profile\');renderProfilePrefs()">Edit</button></div>' +
+    '<div style="font-size:12px;color:var(--dim);margin-bottom:5px"><span style="color:var(--muted)">Background:</span> ' + sanitize(myBg?myBg.name:'Not set') + '</div>' +
+    '<div style="font-size:12px;color:var(--dim)">' + (myAll.length===0?'<span style="color:var(--muted);font-style:italic">No kinks/fetishes/fantasies set yet — go to Profile to add yours.</span>':myAll.map(function(id){var k=KINKS.concat(FETISHES).concat(FANTASIES).find(function(x){return x.id===id;});return k?'<span class="tag" style="border-color:var(--pink)55;color:var(--pink);background:var(--pink)10;margin-right:4px;margin-bottom:4px">'+sanitize(k.name)+'</span>':'';}).join(''))+'</div></div>';
+
+  // Partners list
+  if (STATE.partners.length === 0) {
+    el('partnerslist').innerHTML = '<div style="text-align:center;padding:32px 16px;color:var(--muted);font-style:italic;font-size:14px">No partners added yet.<br><span style="font-size:12px">Tap + Add to begin tracking.</span></div>';
+    return;
+  }
+
+  el('partnerslist').innerHTML = STATE.partners.map(function(p, idx) {
+    var compat = STATE.questDone ? calcCompat(p) : null;
+    var cc = compat ? compatColor(compat.final) : 'var(--muted)';
+    var bondLabel = BOND_LABELS[Math.min(p.bondLevel||0,7)];
+    var bondDots = '<div class="bondtrack">' +
+      BOND_LABELS.map(function(_,i){return '<div class="bonddot" style="background:'+(i<=(p.bondLevel||0)?'var(--gold)':'var(--s3)')+'"></div>';}).join('') +
+      '</div>';
+
+    return '<div class="pcard" id="pcard-'+idx+'">' +
+      '<div class="pcard-head" data-pidx="'+idx+'">' +
+      '<div style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid '+cc+';background:'+cc+'18">' + sanitize(p.emoji||'☽') + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+      '<div style="font-size:15px;font-weight:700;color:var(--text)">' + sanitize(p.name) + '</div>' +
+      '<div style="display:flex;gap:6px;align-items:center;margin-top:2px;flex-wrap:wrap">' +
+      (p.energy?'<span style="font-size:10px;color:var(--muted);font-family:\'Space Mono\',monospace">'+sanitize(p.energy)+'</span>':'') +
+      '<span style="font-size:10px;color:var(--gold);font-family:\'Space Mono\',monospace">'+sanitize(bondLabel)+'</span></div>' +
+      bondDots + '</div>' +
+      (compat?'<div class="cring" style="border-color:'+cc+';background:'+cc+'12"><div class="cring-num" style="color:'+cc+'">'+compat.final+'</div><div class="cring-lbl">COMPAT</div></div>':'') +
+      '</div>' +
+      '<div class="pcard-body" id="pbody-'+idx+'">' +
+      renderPartnerDetail(p, idx, compat) +
+      '</div></div>';
+  }).join('');
+
+  // Bind card expand/collapse
+  el('partnerslist').querySelectorAll('.pcard-head').forEach(function(head) {
+    head.addEventListener('click', function() {
+      var idx = this.dataset.pidx;
+      var body = el('pbody-'+idx);
+      body.classList.toggle('on');
+    });
+  });
+}
+
+function renderPartnerDetail(p, idx, compat) {
+  var allKinkData = KINKS.concat(FETISHES).concat(FANTASIES);
+  var myAll = STATE.myKinks.concat(STATE.myFetishes).concat(STATE.myFantasies);
+  var herAll = p.theirKinks.concat(p.theirFetishes).concat(p.theirFantasies);
+  var shared = compat ? compat.shared : [];
+  var herBg = CULTURAL_BG.find(function(b){return b.id===p.background;});
+
+  var h = '<div style="margin-top:12px">';
+
+  // Compat breakdown
+  if (compat) {
+    var cc = compatColor(compat.final);
+    h += '<div style="margin-bottom:14px;padding:12px;background:var(--s3);border-radius:7px">' +
+      '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">' +
+      '<div class="cring" style="border-color:'+cc+';background:'+cc+'12;width:60px;height:60px"><div class="cring-num" style="font-size:18px;color:'+cc+'">'+compat.final+'</div><div class="cring-lbl">&#x2F;100</div></div>' +
+      '<div style="flex:1">' +
+      '<div style="font-size:16px;font-weight:700;color:'+cc+';margin-bottom:4px">'+compatLabel(compat.final)+'</div>' +
+      '<div style="font-size:11px;font-family:\'Space Mono\',monospace;color:var(--muted)">'+compat.sharedCount+' shared interests of '+Math.max(compat.yourCount,compat.theirCount)+' total</div>' +
+      '</div></div>' +
+      '<div style="margin-bottom:5px">'+barHTML(compat.kinkScore,'var(--pink)','Kink Overlap')+'</div>' +
+      '<div style="margin-bottom:5px">'+barHTML(compat.cultScore,'var(--teal)','Cultural Compatibility')+'</div>' +
+      barHTML(compat.bgHarmony,'var(--violet)','Background Harmony') + '</div>';
+
+    // Shared kinks
+    if (shared.length > 0) {
+      h += '<div class="sec" style="margin-top:0">SHARED INTERESTS</div>';
+      h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">';
+      shared.forEach(function(kId) {
+        var k = allKinkData.find(function(x){return x.id===kId;});
+        if (k) h += '<span class="tag" style="border-color:var(--violet)55;color:var(--violet);background:var(--violet)10">'+sanitize(k.name)+'</span>';
+      });
+      h += '</div>';
+    }
+
+    // Taboo flags
+    var tabooFlags = [];
+    shared.forEach(function(kId) {
+      var k = allKinkData.find(function(x){return x.id===kId;});
+      if (!k || !herBg) return;
+      var t = herBg.taboo[k.culturalCat]||0;
+      if (t >= 5) tabooFlags.push({name:k.name,t:t,bg:herBg.name});
+    });
+    if (tabooFlags.length > 0) {
+      h += '<div class="card" style="border-color:var(--wine);background:var(--wine)0a;margin-bottom:12px">' +
+        '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--wine);margin-bottom:7px">⚠ CULTURAL TABOO FLAGS</div>';
+      tabooFlags.forEach(function(f) {
+        h += '<div style="font-size:12px;color:var(--dim);margin-bottom:4px"><span style="color:var(--wine)">'+sanitize(f.name)+'</span> — significant taboo in <span style="color:var(--text)">'+sanitize(f.bg)+'</span> context. Navigate with awareness and care.</div>';
+      });
+      h += '</div>';
+    }
+  }
+
+  // Her preferences
+  h += '<div class="sec">HER INTERESTS</div>';
+  h += '<div style="margin-bottom:12px">';
+  if (herAll.length === 0) {
+    h += '<div style="color:var(--muted);font-style:italic;font-size:13px">None added yet. Use edit to add her kinks, fetishes, and fantasies.</div>';
+  } else {
+    herAll.forEach(function(kId) {
+      var k = allKinkData.find(function(x){return x.id===kId;});
+      if (!k) return;
+      var isShared = shared.indexOf(kId) > -1;
+      var c = isShared?'var(--violet)':'var(--teal)';
+      h += '<span class="tag" style="border-color:'+c+'55;color:'+c+';background:'+c+'10;margin-right:4px;margin-bottom:4px">'+sanitize(k.name)+(isShared?' ✦':'')+'</span>';
+    });
+  }
+  h += '</div>';
+
+  // Notes
+  if (p.notes) {
+    h += '<div style="font-size:12px;color:var(--muted);font-style:italic;border-left:2px solid var(--b2);padding:8px 10px;border-radius:0 4px 4px 0;background:var(--s3);margin-bottom:12px">'+sanitize(p.notes)+'</div>';
+  }
+
+  // Trust + bond
+  h += '<div class="g2" style="margin-bottom:12px">' +
+    '<div class="sbox"><div class="snum" style="color:var(--teal)">'+(p.trust||30)+'</div><div class="slbl">TRUST</div></div>' +
+    '<div class="sbox"><div class="snum" style="color:var(--gold)">'+(p.sessions||0)+'</div><div class="slbl">SESSIONS</div></div>' +
+    '</div>';
+
+  // Actions
+  h += '<div class="btn-row">' +
+    '<button class="btn sm fill" onclick="openEditPartner('+idx+')">Edit Preferences</button>' +
+    '<button class="btn sm muted" onclick="logSessionForPartner(\''+sanitize(p.name)+'\')">+ Log Session</button>' +
+    '<button class="btn sm danger" onclick="deletePartner('+idx+')">Remove</button>' +
+    '</div></div>';
+
+  return h;
+}
+
+function barHTML(val, color, label) {
+  return (label?'<div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:12px;color:var(--dim)">'+sanitize(label)+'</span><span style="font-family:\'Space Mono\',monospace;font-size:12px;color:'+color+'">'+val+'</span></div>':'') +
+    '<div style="background:var(--s3);border-radius:2px;height:5px;overflow:hidden;margin-top:1px"><div style="height:100%;border-radius:2px;background:'+color+';width:'+Math.min(val,100)+'%;transition:width .4s"></div></div>';
+}
+
+function openAddPartner() {
+  el('mbody').innerHTML = buildPartnerForm(null, -1);
+  el('moverlay').classList.add('on');
+  bindPartnerForm(-1);
+}
+
+function openEditPartner(idx) {
+  var p = STATE.partners[idx];
+  if (!p) return;
+  el('mbody').innerHTML = buildPartnerForm(p, idx);
+  el('moverlay').classList.add('on');
+  bindPartnerForm(idx);
+}
+
+function buildPartnerForm(p, idx) {
+  var isNew = idx === -1;
+  var allKinkData = KINKS.concat(FETISHES).concat(FANTASIES);
+
+  // Kink sections for "her" preferences
+  function kinkSection(label, arr, field) {
+    var herArr = p ? (p[field]||[]) : [];
+    var h = '<div style="margin-bottom:14px"><div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted);letter-spacing:.12em;margin-bottom:7px">HER '+label.toUpperCase()+'</div><div class="kgrid">';
+    arr.forEach(function(k) {
+      var on = herArr.indexOf(k.id) > -1;
+      h += '<div class="kchip '+(on?'theirs':'')+'" data-field="'+field+'" data-kid="'+k.id+'">' +
+        '<div class="kchip-name">'+(on?'✓ ':'')+sanitize(k.name)+'</div>' +
+        '<div class="kchip-sub">'+heatBadge(k.heat)+'</div></div>';
+    });
+    h += '</div></div>';
+    return h;
+  }
+
+  var h = '<div style="font-size:16px;font-weight:700;color:var(--cream);margin-bottom:14px">'+(isNew?'Add Partner':'Edit '+sanitize(p.name))+'</div>';
+
+  h += '<div class="field"><label>NAME</label><input id="pf-name" type="text" maxlength="60" value="'+sanitize(p?p.name:'')+'"></div>';
+  h += '<div class="field"><label>EMOJI (how you remember her)</label><input id="pf-emoji" type="text" maxlength="4" value="'+sanitize(p?p.emoji||'☽':'☽')+'" style="max-width:80px"></div>';
+
+  h += '<div class="field"><label>HER CULTURAL BACKGROUND</label><div class="cultgrid" id="pf-bg">';
+  CULTURAL_BG.forEach(function(bg) {
+    var on = p && p.background===bg.id;
+    h += '<div class="cultopt '+(on?'on':'')+'" data-bgid="'+bg.id+'">'+sanitize(bg.name)+'</div>';
+  });
+  h += '</div></div>';
+
+  h += '<div class="field"><label>HER ENERGY / VIBE</label><select id="pf-energy">';
+  ENERGY_LABELS.forEach(function(e){h+='<option '+(p&&p.energy===e?'selected':'')+'>'+sanitize(e)+'</option>';});
+  h += '</select></div>';
+
+  h += '<div class="g2" style="margin-bottom:12px">' +
+    '<div class="field" style="margin:0"><label>TRUST (0–100)</label><input id="pf-trust" type="number" min="0" max="100" value="'+(p?p.trust||30:30)+'"></div>' +
+    '<div class="field" style="margin:0"><label>BOND LEVEL (0–7)</label><select id="pf-bond">';
+  BOND_LABELS.forEach(function(bl,i){h+='<option value="'+i+'" '+(p&&p.bondLevel===i?'selected':'')+'>'+i+' — '+sanitize(bl)+'</option>';});
+  h += '</select></div></div>';
+
+  // Her kink preferences
+  h += kinkSection('Kinks', KINKS, 'theirKinks');
+  h += kinkSection('Fetishes', FETISHES, 'theirFetishes');
+  h += kinkSection('Fantasies', FANTASIES, 'theirFantasies');
+
+  h += '<div class="field"><label>NOTES (private observations)</label><textarea id="pf-notes" maxlength="1000" placeholder="Arousal patterns, what works, what doesn\'t, unique preferences...">'+sanitize(p?p.notes||'':'')+'</textarea></div>';
+
+  h += '<div class="btn-row"><button class="btn fill" id="pf-save">'+(isNew?'Add Partner':'Save Changes')+'</button></div>';
+  return h;
+}
+
+function heatBadge(heat) {
+  var c={'B':'var(--teal)','A':'var(--gold)','S':'var(--rose)','SS':'var(--wine)'}[heat]||'var(--muted)';
+  return '<span style="background:'+c+'22;border:1px solid '+c+'55;color:'+c+';padding:1px 5px;border-radius:3px;font-size:9px;font-family:\'Space Mono\',monospace;font-weight:700">'+heat+'</span>';
+}
+
+function bindPartnerForm(idx) {
+  var isNew = idx === -1;
+  var selectedBg = (idx >= 0 && STATE.partners[idx]) ? STATE.partners[idx].background : '';
+  var selectedKinks = {theirKinks:[], theirFetishes:[], theirFantasies:[]};
+  if (!isNew && STATE.partners[idx]) {
+    selectedKinks.theirKinks = STATE.partners[idx].theirKinks.slice();
+    selectedKinks.theirFetishes = STATE.partners[idx].theirFetishes.slice();
+    selectedKinks.theirFantasies = STATE.partners[idx].theirFantasies.slice();
+  }
+
+  // Background toggle
+  el('mbody').querySelectorAll('.cultopt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      el('mbody').querySelectorAll('.cultopt').forEach(function(x){x.classList.remove('on');});
+      this.classList.add('on');
+      selectedBg = this.dataset.bgid;
+    });
+  });
+
+  // Kink chips toggle
+  el('mbody').querySelectorAll('.kchip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var field = this.dataset.field;
+      var kid = this.dataset.kid;
+      var arr = selectedKinks[field];
+      var pos = arr.indexOf(kid);
+      if (pos > -1) { arr.splice(pos,1); this.classList.remove('theirs'); this.querySelector('.kchip-name').textContent = KINKS.concat(FETISHES).concat(FANTASIES).find(function(k){return k.id===kid;}).name; }
+      else { arr.push(kid); this.classList.add('theirs'); this.querySelector('.kchip-name').textContent = '✓ ' + KINKS.concat(FETISHES).concat(FANTASIES).find(function(k){return k.id===kid;}).name; }
+    });
+  });
+
+  // Save
+  el('pf-save').addEventListener('click', function() {
+    var name = el('pf-name').value.trim().slice(0,60);
+    if (!name) { toast('Partner name required'); return; }
+    var partner = {
+      id: isNew ? ('p'+Date.now()) : STATE.partners[idx].id,
+      name: name,
+      emoji: el('pf-emoji').value.slice(0,4)||'☽',
+      background: selectedBg,
+      energy: el('pf-energy').value,
+      trust: Math.min(100,Math.max(0,parseInt(el('pf-trust').value)||30)),
+      bondLevel: Math.min(7,Math.max(0,parseInt(el('pf-bond').value)||0)),
+      sessions: isNew ? 0 : (STATE.partners[idx].sessions||0),
+      notes: el('pf-notes').value.slice(0,1000),
+      theirKinks: selectedKinks.theirKinks,
+      theirFetishes: selectedKinks.theirFetishes,
+      theirFantasies: selectedKinks.theirFantasies,
+      ratings: isNew ? {looks:0,energy:0,chemistry:0} : STATE.partners[idx].ratings
+    };
+    if (isNew) STATE.partners.push(partner);
+    else STATE.partners[idx] = partner;
+    save();
+    el('moverlay').classList.remove('on');
+    renderPartners();
+    toast(isNew?'Partner added':'Changes saved');
+  });
+}
+
+function deletePartner(idx) {
+  if (!confirm('Remove this partner from the system?')) return;
+  STATE.partners.splice(idx,1);
+  save();
+  renderPartners();
+  toast('Partner removed');
+}
+
+function logSessionForPartner(name) {
+  var p = STATE.partners.find(function(x){return x.name===name;});
+  if (p) { p.sessions = (p.sessions||0)+1; save(); }
+  goPage('log');
+  toast('Log this session for '+name);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROFILE — MY PREFERENCES (called from partners page)
+// ═══════════════════════════════════════════════════════════════
+function renderProfilePrefs() {
+  // Called to scroll profile to preferences section after navigation
+  setTimeout(function(){
+    var el2 = document.getElementById('prof-prefs');
+    if (el2) el2.scrollIntoView({behavior:'smooth'});
+  }, 200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FIELD — KINK / FETISH / FANTASY LIBRARY
+// ═══════════════════════════════════════════════════════════════
+function renderKinkLibrary(type) {
+  var data = type==='kinks'?KINKS:type==='fetishes'?FETISHES:FANTASIES;
+  var myArr = type==='kinks'?STATE.myKinks:type==='fetishes'?STATE.myFetishes:STATE.myFantasies;
+  var stateKey = type==='kinks'?'myKinks':type==='fetishes'?'myFetishes':'myFantasies';
+  var headColor = type==='kinks'?'var(--rose)':type==='fetishes'?'var(--amber)':'var(--violet)';
+
+  var h = '<div class="card" style="border-color:'+headColor+'44;background:'+headColor+'08;margin-bottom:14px">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:'+headColor+';margin-bottom:5px;letter-spacing:.12em">MARK YOURS — APPEARS IN COMPATIBILITY</div>' +
+    '<div class="cbody">Tap any entry below to mark it as one of your own. These feed the compatibility engine in the Partners tab. Study entries to know what to look for in a partner.</div></div>';
+
+  data.forEach(function(k) {
+    var mine = myArr.indexOf(k.id) > -1;
+    var hc = {'B':'var(--teal)','A':'var(--gold)','S':'var(--rose)','SS':'var(--wine)'}[k.heat]||'var(--muted)';
+    h += '<div class="card" style="border-color:'+(mine?headColor:'var(--b1)')+';background:'+(mine?headColor+'0f':'var(--s2)')+';margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">' +
+      '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:'+(mine?headColor:'var(--text)')+'">'+sanitize(k.name)+'</div>' +
+      '<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">' +
+      '<span style="background:'+hc+'22;border:1px solid '+hc+'55;color:'+hc+';padding:1px 6px;border-radius:3px;font-size:9px;font-family:\'Space Mono\',monospace;font-weight:700">'+k.heat+'</span>' +
+      '<span style="font-size:10px;color:var(--muted);font-family:\'Space Mono\',monospace">DANGER: '+'●'.repeat(k.danger)+'○'.repeat(5-k.danger)+'</span>' +
+      '<span style="font-size:10px;color:var(--muted);font-family:\'Space Mono\',monospace">ACCEPTANCE: '+'●'.repeat(k.acceptance)+'○'.repeat(5-k.acceptance)+'</span>' +
+      '</div></div>' +
+      '<button class="btn sm '+(mine?'fill':'muted')+'" data-klid="'+k.id+'" data-ktype="'+stateKey+'" style="flex-shrink:0;margin-left:8px;border-color:'+headColor+';color:'+(mine?'white':headColor)+';background:'+(mine?headColor:'transparent')+'">'+( mine?'✓ Mine':'+ Add')+'</button></div>' +
+      '<div class="cbody" style="margin-bottom:8px">'+sanitize(k.desc)+'</div>' +
+      '<div style="background:var(--s3);border-radius:5px;padding:9px;margin-bottom:7px">' +
+      '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--gold);margin-bottom:4px">HOW TO INTRODUCE</div>' +
+      '<div style="font-size:12px;color:var(--muted);line-height:1.7">'+sanitize(k.intro)+'</div></div>' +
+      '<div style="font-size:11px;color:var(--muted);font-style:italic;padding:7px 10px;background:var(--s3);border-radius:4px">' +
+      '<span style="color:var(--wine);font-family:\'Space Mono\',monospace;font-size:9px">SAFETY · </span>'+sanitize(k.safety)+'</div></div>';
+  });
+
+  return h;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SETTINGS — BACKUP / EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════════
+function openSettings() {
+  var lv = getLevel(STATE.xp);
+  var logCount = STATE.logs.length;
+  var partnerCount = STATE.partners.length;
+  var skillCount = Object.keys(STATE.skills).filter(function(k){return STATE.skills[k]>0;}).length;
+  var dataSize = Math.round(JSON.stringify(STATE).length / 1024);
+
+  el('mbody').innerHTML = '<div style="font-size:16px;font-weight:700;color:var(--cream);margin-bottom:4px">⚙ Settings & Backup</div>' +
+    '<div style="font-size:11px;color:var(--muted);font-family:\'Space Mono\',monospace;margin-bottom:16px">Your data lives on your device. Export regularly.</div>' +
+
+    '<div class="card" style="border-color:var(--teal)33;margin-bottom:14px">' +
+    '<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--teal);margin-bottom:8px;letter-spacing:.12em">YOUR DATA</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">' +
+    '<div class="sbox"><div class="snum" style="color:var(--pink)">'+lv+'</div><div class="slbl">LEVEL</div></div>' +
+    '<div class="sbox"><div class="snum" style="color:var(--gold)">'+logCount+'</div><div class="slbl">LOGS</div></div>' +
+    '<div class="sbox"><div class="snum" style="color:var(--teal)">'+skillCount+'</div><div class="slbl">SKILLS</div></div>' +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--muted);font-family:\'Space Mono\',monospace">'+partnerCount+' partners · '+dataSize+' KB stored</div></div>' +
+
+    '<div class="sec" style="margin-top:0">BACKUP YOUR DATA</div>' +
+    '<div class="card" style="margin-bottom:10px">' +
+    '<div class="cbody" style="margin-bottom:10px">Export all your data as a JSON file. Save it to iCloud Drive or your Notes app. If your browser data is ever cleared, you can restore everything from this file.</div>' +
+    '<button class="btn fill" id="btn-export" style="width:100%;margin-bottom:8px">↓ Export All Data (JSON)</button>' +
+    '<button class="btn teal" id="btn-import" style="width:100%">↑ Import / Restore Data</button>' +
+    '<input type="file" id="import-file" accept=".json" style="display:none">' +
+    '</div>' +
+
+    '<div class="sec">DANGER ZONE</div>' +
+    '<div class="card" style="border-color:var(--wine)44;margin-bottom:10px">' +
+    '<div class="cbody" style="margin-bottom:10px">Permanently erase all data and start fresh. Export a backup first.</div>' +
+    '<button class="btn danger" id="btn-reset" style="width:100%">✕ Reset All Data</button></div>' +
+
+    '<div class="sec">INSTALL ON IPHONE</div>' +
+    '<div class="card" style="background:var(--s3)">' +
+    '<div style="font-size:10px;font-family:\'Space Mono\',monospace;color:var(--gold);margin-bottom:8px">HOW TO INSTALL AS A PRIVATE APP</div>' +
+    '<div style="counter-reset:step">' +
+    ['Open this URL in <strong style="color:var(--text)">Safari</strong> (not Chrome)',
+     'Tap the <strong style="color:var(--text)">Share button</strong> (box with arrow) at the bottom of Safari',
+     'Scroll down and tap <strong style="color:var(--text)">"Add to Home Screen"</strong>',
+     'Name it anything (or leave it as EROS) and tap <strong style="color:var(--text)">Add</strong>',
+     'The app now runs fullscreen from your home screen like a native app',
+     '<strong style="color:var(--teal)">Export your data monthly</strong> as an extra backup'
+    ].map(function(step,i){
+      return '<div style="display:flex;gap:10px;margin-bottom:9px;align-items:flex-start">' +
+        '<div style="width:20px;height:20px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:\'Space Mono\',monospace;flex-shrink:0;margin-top:2px">'+(i+1)+'</div>' +
+        '<div style="font-size:13px;color:var(--dim);line-height:1.6">'+step+'</div></div>';
+    }).join('') +
+    '</div></div>';
+
+  el('moverlay').classList.add('on');
+
+  // Bind export
+  el('btn-export').addEventListener('click', function() {
+    try {
+      var data = JSON.stringify(STATE, null, 2);
+      var blob = new Blob([data], {type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'eros-backup-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast('✓ Data exported successfully');
+    } catch(e) {
+      // On iOS Safari, use the share sheet fallback
+      var data = JSON.stringify(STATE, null, 2);
+      var w = window.open('', '_blank');
+      if (w) { w.document.write('<pre style="word-break:break-all;font-size:11px">'+data+'</pre>'); w.document.title='EROS Backup'; }
+      else { toast('Copy the data from the URL bar'); }
+    }
+  });
+
+  // Bind import
+  el('btn-import').addEventListener('click', function() {
+    el('import-file').click();
+  });
+  el('import-file').addEventListener('change', function() {
+    var file = this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var parsed = JSON.parse(e.target.result);
+        if (!parsed || typeof parsed !== 'object' || typeof parsed.xp !== 'number') {
+          toast('Invalid backup file'); return;
+        }
+        if (confirm('This will replace ALL current data with the backup. Continue?')) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          location.reload();
+        }
+      } catch(err) {
+        toast('Could not read file');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Bind reset
+  el('btn-reset').addEventListener('click', function() {
+    if (confirm('Delete ALL data permanently? This cannot be undone.')) {
+      if (confirm('Are you absolutely sure? Export a backup first if you want to keep your progress.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SERVICE WORKER REGISTRATION
+// ═══════════════════════════════════════════════════════════════
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', {scope:'/'})
+      .then(function(reg) {
+        console.log('SW registered, scope:', reg.scope);
+      })
+      .catch(function(err) {
+        console.log('SW registration failed:', err);
+      });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  load();
+  buildLogSelect();
+  updateLogXPPreview();
+  bindEvents();
+  // Partners add button
+  var addBtn = el('btn-addpartner');
+  if (addBtn) addBtn.addEventListener('click', openAddPartner);
+  // Set greeting
+  var h = new Date().getHours();
+  el('greeting').textContent = h<12?'Good morning.':h<17?'Good afternoon.':'Good evening.';
+  renderHome();
+  // Register service worker for offline + PWA
+  registerSW();
+});
+</script>
+</body>
+</html>
