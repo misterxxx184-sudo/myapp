@@ -1,54 +1,37 @@
-// service-worker.js
+const CACHE_NAME = "eros-v1";
 
-// Define a cache name
-const CACHE_NAME = 'myapp-cache-v1';
-
-// Define the files to cache
-const urlsToCache = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/script.js',
-    // Add more files as needed
-];
-
-// Install event - Caching files
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
-            })
-    );
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache =>
+      cache.addAll([
+        "./",
+        "./index.html",
+        "./manifest.json",
+        "./icons/icon-192.png",
+        "./icons/icon-512.png"
+      ])
+    )
+  );
+  self.skipWaiting();
 });
 
-// Fetch event - Return cached files if available
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                // Cache hit - return the response from the cached version
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
-    );
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
 });
 
-// Activate event - Remove old caches
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
