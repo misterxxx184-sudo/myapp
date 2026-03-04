@@ -1,69 +1,70 @@
-// EROS — Service Worker
-// Caches the app shell so it works 100% offline after first load.
-// All data stays in localStorage on your device — nothing leaves your phone.
+const CACHE_NAME = "eros-cache-v1";
 
-var CACHE = 'eros-v1';
-var SHELL = [
-  '/',
-  '/index.html',
-  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Space+Mono:wght@400;700&display=swap',
-  'https://fonts.gstatic.com/s/cormorantgaramond/v22/BXRsvFTEx_BadMTzzuq9lm5sNXFqTqkvZQ.woff2',
-  'https://fonts.gstatic.com/s/spacemono/v13/i7dPIFZifjKcF5UAWdDRYE58RWq7.woff2'
+const CORE_ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json"
 ];
 
-// Install — cache app shell
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE).then(function(cache) {
-      // Cache core files, ignore font failures (not critical)
-      return cache.addAll(['/', '/index.html']).then(function() {
-        return Promise.allSettled(
-          SHELL.slice(2).map(function(url) { return cache.add(url); })
-        );
-      });
-    }).then(function() {
-      return self.skipWaiting();
+// Install
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(CORE_ASSETS);
     })
   );
+  self.skipWaiting();
 });
 
-// Activate — clean old caches
-self.addEventListener('activate', function(e) {
-  e.waitUntil(
-    caches.keys().then(function(keys) {
+// Activate
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter(function(k) { return k !== CACHE; })
-            .map(function(k) { return caches.delete(k); })
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
-    }).then(function() {
-      return self.clients.claim();
     })
   );
+  self.clients.claim();
 });
 
-// Fetch — serve from cache, fall back to network
-self.addEventListener('fetch', function(e) {
-  // Only handle GET requests
-  if (e.request.method !== 'GET') return;
-
-  e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      if (cached) return cached;
-
-      // Not in cache — fetch from network and cache it
-      return fetch(e.request).then(function(response) {
-        if (!response || response.status !== 200 || response.type === 'error') {
+// Fetch
+self.addEventListener("fetch", (event) => {
+  // Navigation requests (HTML)
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put("./index.html", copy);
+          });
           return response;
-        }
-        var clone = response.clone();
-        caches.open(CACHE).then(function(cache) {
-          cache.put(e.request, clone);
-        });
-        return response;
-      }).catch(function() {
-        // Offline fallback — return cached index
-        return caches.match('/index.html');
-      });
+        })
+        .catch(() => {
+          return caches.match("./index.html");
+        })
+    );
+    return;
+  }
+
+  // Other requests (CSS, fonts, images)
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, copy);
+          });
+          return response;
+        })
+      );
     })
   );
 });
