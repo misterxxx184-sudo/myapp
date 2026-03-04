@@ -1,70 +1,102 @@
-const CACHE_NAME = "eros-cache-v1";
+'use strict';
 
-const CORE_ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json"
+const CACHE_VERSION = 'eros-v1';
+const STATIC_CACHE = `static-${CACHE_VERSION}`;
+const FONT_CACHE = `fonts-${CACHE_VERSION}`;
+
+// Core app shell files
+const APP_SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
-// Install
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(CORE_ASSETS);
-    })
-  );
+// Install — cache app shell
+self.addEventListener('install', event => {
   self.skipWaiting();
-});
-
-// Activate
-self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
+    caches.open(STATIC_CACHE)
+      .then(cache => cache.addAll(APP_SHELL))
   );
-  self.clients.claim();
 });
 
-// Fetch
-self.addEventListener("fetch", (event) => {
-  // Navigation requests (HTML)
-  if (event.request.mode === "navigate") {
+// Activate — clean old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => !key.includes(CACHE_VERSION))
+          .map(key => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// Fetch strategy
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  // Google Fonts stylesheets
+  if (url.origin === 'https://fonts.googleapis.com') {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put("./index.html", copy);
-          });
-          return response;
-        })
-        .catch(() => {
-          return caches.match("./index.html");
-        })
+      caches.open(FONT_CACHE).then(cache =>
+        fetch(req).then(res => {
+          cache.put(req, res.clone());
+          return res;
+        }).catch(() => cache.match(req))
+      )
     );
     return;
   }
 
-  // Other requests (CSS, fonts, images)
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, copy);
+  // Google Fonts font files
+  if (url.origin === 'https://fonts.gstatic.com') {
+    event.respondWith(
+      caches.open(FONT_CACHE).then(cache =>
+        cache.match(req).then(res =>
+          res ||
+          fetch(req).then(networkRes => {
+            cache.put(req, networkRes.clone());
+            return networkRes;
+          })
+        )
+      )
+    );
+    return;
+  }
+
+  // App navigation requests (SPA)
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(STATIC_CACHE).then(cache => {
+            cache.put('/index.html', copy);
           });
-          return response;
+          return res;
         })
-      );
-    })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // Default: cache first, then network
+  event.respondWith(
+    caches.match(req).then(res =>
+      res ||
+      fetch(req).then(networkRes => {
+        if (req.method === 'GET') {
+          caches.open(STATIC_CACHE).then(cache => {
+            cache.put(req, networkRes.clone());
+          });
+        }
+        return networkRes;
+      })
+    )
   );
 });
