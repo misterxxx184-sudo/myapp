@@ -1,22 +1,25 @@
 {
   "name": "EROS — Mastery System",
   "short_name": "EROS",
-  "description": "Personal mastery, tracking, and evolution system.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "description": "A mastery tracking system for experience, skills, and personal growth.",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#120810",
   "theme_color": "#120810",
+  "categories": ["lifestyle", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
